@@ -22,5 +22,16 @@
 
   <div *ngIf="user">{{user.email}}</div>
 
-  <div id="chart"></div>
+  <!-- some chart experimentation -->
+
+  <canvas baseChart width="400" height="400"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [options]="lineChartOptions"
+          [colors]="lineChartColors"
+          [legend]="lineChartLegend"
+          [chartType]="lineChartType"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked($event)"></canvas>
+
 </ion-content>

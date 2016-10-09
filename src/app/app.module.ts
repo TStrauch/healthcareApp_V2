@@ -20,7 +20,9 @@ import {ProfilePage} from "../pages/profile-page/profile-page";
 import {KnowledgePage} from "../pages/knowledge-page/knowledge-page";
 import {TrainingPage} from "../pages/training-page/training-page";
 import {KnowledgeDetailPage} from "../pages/knowledge-detail/knowledge-detail";
+import {ChartsModule} from "ng2-charts/ng2-charts";
 
+// Import additional libraries
 
 export const firebaseconfig = {
   apiKey: "AIzaSyCxSuxUhRSJ0yBgLmM6FHTui3qatvHXmMo",
@@ -51,7 +53,8 @@ const myFirebaseAuthConfig = {
   ],
   imports: [
     IonicModule.forRoot(MyApp),
-    AngularFireModule.initializeApp(firebaseconfig, myFirebaseAuthConfig)
+    AngularFireModule.initializeApp(firebaseconfig, myFirebaseAuthConfig),
+    ChartsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

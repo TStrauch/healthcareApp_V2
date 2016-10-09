@@ -25,9 +25,9 @@ export class UserProvider {
           observer.next(user);
         }
         else{
-          observer.onError(null);
+          observer.error(null);
         }
-        observer.onCompleted();
+        observer.complete();
       });
     });
   }
