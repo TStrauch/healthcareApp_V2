@@ -33,10 +33,9 @@ export class KnowledgePage {
     debugger;
   }
 
-  exerciseSelected(event, exercise) {
-    console.log('KnowledgePage: exerciseSelected');
+  exerciseSelected(index) {
     this.navCtrl.push(KnowledgeDetailPage, {
-      id: exercise.id,
+      exercise: this.exercises[index],
     });
   }
 

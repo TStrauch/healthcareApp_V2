@@ -18,10 +18,9 @@ export class KnowledgeDetailPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public trainingProvider: TrainingProvider) {
 
-    console.log('KnowledgeDetailPage: constructor start');
-    this.id = navParams.get("id");
-    this.exerciseInfo = {id:1, name:'Backstretching'};
-    console.log('KnowledgeDetailPage: constructor end');
+    this.exerciseInfo = this.navParams.get("exercise");
+    // this.id = navParams.get("id");
+    // this.exerciseInfo = {id:1, name:'Backstretching'};
 
     // this.trainingProvider.getSingleExercise(this.id).then(data => {
     //   this.exerciseInfo = data;
