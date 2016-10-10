@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import {IonicApp, IonicModule} from 'ionic-angular';
+import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { MyApp } from './app.component';
 
 //Pages
@@ -23,6 +24,24 @@ import {KnowledgeDetailPage} from "../pages/knowledge-detail/knowledge-detail";
 import {ChartsModule} from "ng2-charts/ng2-charts";
 
 // Import additional libraries
+
+const cloudSettings: CloudSettings = {
+  'core': {
+    'app_id': '211fde7e'
+  },
+  'push': {
+    'sender_id': 'SENDER_ID',
+    'pluginConfig': {
+      'ios': {
+        'badge': true,
+        'sound': true
+      },
+      'android': {
+        'iconColor': '#343434'
+      }
+    }
+  }
+};
 
 export const firebaseconfig = {
   apiKey: "AIzaSyCxSuxUhRSJ0yBgLmM6FHTui3qatvHXmMo",
@@ -53,6 +72,7 @@ const myFirebaseAuthConfig = {
   ],
   imports: [
     IonicModule.forRoot(MyApp),
+    CloudModule.forRoot(cloudSettings),
     AngularFireModule.initializeApp(firebaseconfig, myFirebaseAuthConfig),
     ChartsModule
   ],

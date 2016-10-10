@@ -24,8 +24,11 @@ export class Signup {
   submitAttempt: boolean = false;
   loading: any;
 
-  constructor(public nav: NavController, public userProvider: UserProvider, public formBuilder: FormBuilder,
-              public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
+  constructor(public nav: NavController,
+              public userProvider: UserProvider,
+              public formBuilder: FormBuilder,
+              public loadingCtrl: LoadingController,
+              public alertCtrl: AlertController) {
 
     this.signupForm = formBuilder.group({
       email: ['', Validators.required],
@@ -50,6 +53,7 @@ export class Signup {
       console.log(this.signupForm.value);
     } else {
       this.userProvider.signupUser(this.signupForm.value.email, this.signupForm.value.password).then(() => {
+
         this.nav.setRoot(HomePage);
       }, (error) => {
         this.loading.dismiss();

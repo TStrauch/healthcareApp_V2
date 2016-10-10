@@ -42,10 +42,7 @@ var rollupConfig = {
     builtins(),
     commonjs({
       include: [
-        'node_modules/rxjs/**',
-        'node_modules/firebase/**',
-        'node_modules/angularfire2/**',
-        'node_modules/ng2-charts/**'
+        'node_modules/**'
       ],
       namedExports: {
         'node_modules/firebase/firebase.js': ['initializeApp', 'auth', 'database'],
