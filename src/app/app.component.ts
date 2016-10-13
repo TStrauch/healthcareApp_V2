@@ -10,7 +10,7 @@ import {TabsPage} from "../pages/tabs-page/tabs-page";
 import {RootPageProvider} from "../providers/rootpage";
 
 
-// import { Push, PushToken } from '@ionic/cloud-angular';
+import { Push, PushToken } from '@ionic/cloud-angular';
 
 
 @Component({
@@ -20,7 +20,7 @@ export class MyApp {
   rootPage;
 
   constructor(platform: Platform,
-              //public push: Push,
+              public push: Push,
               public af: AngularFire,
               public rootPageProvider: RootPageProvider) {
     firebase.initializeApp(firebaseconfig);
@@ -42,15 +42,15 @@ export class MyApp {
       this.rootPage = newRootPage;
     })
 
-    // this.push.register().then((t: PushToken) => {
-    //   return this.push.saveToken(t);
-    // }).then((t: PushToken) => {
-    //   console.log('Token saved:', t.token);
-    // });
-    // this.push.rx.notification()
-    //   .subscribe((msg) => {
-    //     alert(msg.title + ': ' + msg.text);
-    // });
+    this.push.register().then((t: PushToken) => {
+      return this.push.saveToken(t);
+    }).then((t: PushToken) => {
+      console.log('Token saved:', t.token);
+    });
+    this.push.rx.notification()
+      .subscribe((msg) => {
+        alert(msg.title + ': ' + msg.text);
+    });
 
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
