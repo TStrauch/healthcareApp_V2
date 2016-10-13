@@ -14,10 +14,57 @@
 
 
 <ion-content padding>
-   <ion-list>
-    <ion-item *ngFor="let question of questions; let i = index;">
+
+<form>
+
+  <div *ngFor="let question of questions; let i = index;">
+    {{question.description}}
+     <ul class='likert'>
+        <li *ngFor="let scaleElement of scale; let j = index;">
+          <input type="radio" name="{{question.id}}" value="scaleElement.value">
+          <label>{{scaleElement.display}}</label>
+        </li>
+      </ul>
+  </div>
+
+
+
+  </form>
+ 
+
+      <!--   
+        
+         <form>
+
+    <item *ngFor="let question of questions; let i = index;">
       {{question.description}}
-    </ion-item>
-  </ion-list>
- <button (click)="dismiss()">close</button>
+      <ul class='likert'>
+        <li *ngFor="let scaleElement of scale; let j = index;">
+          <input type="radio" name="1" value="scaleElement.value">
+          <label>{{scaleElement.display}}</label>
+        </li>
+      </ul>
+    </item>
+    <form>
+          <ion-item *ngFor="let question of questions; let i = index;">
+        {{question.description}}
+
+        <ion-list radio-group [(ngModel)]="relationship">
+          <ion-item *ngFor="let scaleElement of scale; let j = index;">
+            <ion-label>{{scaleElement.display}}</ion-label>
+            <ion-radio value="scaleElement.value"></ion-radio>
+          </ion-item>
+        </ion-list>
+
+         <div *ngFor="let scaleElement of scale">
+        <label>
+        <input type="radio" name="question.id" [(ngModel)]="answer.scaleElement" 
+        [value]="scaleElement.value">
+        {{scale.display}}
+        </label>
+      </div>
+
+      </ion-item> --->
+
+      <button (click)="dismiss()">close</button>
 </ion-content>
