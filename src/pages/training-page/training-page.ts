@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController } from 'ionic-angular';
+import {Questionnaire} from '../questionnaire/questionnaire'
 
 /*
   Generated class for the TrainingPage page.
@@ -13,10 +14,19 @@ import { NavController } from 'ionic-angular';
 })
 export class TrainingPage {
 
-  constructor(public navCtrl: NavController) {}
+  modal: any;
+
+  constructor(public navCtrl: NavController, public modalCtrl: ModalController) {}
 
   ionViewDidLoad() {
     console.log('Hello TrainingPage Page');
+  }
+
+  showModal(category){
+    
+    this.modal = this.modalCtrl.create(Questionnaire, category);
+    debugger;
+    this.modal.present();
   }
 
 }

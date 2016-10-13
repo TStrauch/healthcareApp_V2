@@ -12,6 +12,7 @@ import { Signup } from '../pages/signup/signup';
 // Import providers
 import { UserProvider } from '../providers/user-provider';
 import {TrainingProvider} from "../providers/training-provider";
+import  {QuestionProvider} from "../providers/question-provider";
 import {RootPageProvider} from "../providers/rootpage";
 
 // Import the AF2 Module
@@ -21,6 +22,7 @@ import {ProfilePage} from "../pages/profile-page/profile-page";
 import {KnowledgePage} from "../pages/knowledge-page/knowledge-page";
 import {TrainingPage} from "../pages/training-page/training-page";
 import {KnowledgeDetailPage} from "../pages/knowledge-detail/knowledge-detail";
+import {Questionnaire} from "../pages/questionnaire/questionnaire";
 import {ChartsModule} from "ng2-charts/ng2-charts";
 
 // Import additional libraries
@@ -30,7 +32,7 @@ const cloudSettings: CloudSettings = {
     'app_id': '211fde7e'
   },
   'push': {
-    'sender_id': 'SENDER_ID',
+    'sender_id': '157850107630',
     'pluginConfig': {
       'ios': {
         'badge': true,
@@ -44,9 +46,9 @@ const cloudSettings: CloudSettings = {
 };
 
 export const firebaseconfig = {
-  apiKey: "AIzaSyCxSuxUhRSJ0yBgLmM6FHTui3qatvHXmMo",
-  authDomain: "ionic2rctest.firebaseapp.com",
-  databaseURL: "https://ionic2rctest.firebaseio.com",
+  apiKey: "AIzaSyA8FuVvYO2pwraBAQW8tQrvV_5T66xm1as",
+   authDomain: "healthcareapp-18fe6.firebaseapp.com",
+   databaseURL: "https://healthcareapp-18fe6.firebaseio.com",
   storageBucket: "",
   messagingSenderId: "876282683428"
 };
@@ -68,7 +70,8 @@ const myFirebaseAuthConfig = {
     ProfilePage,
     KnowledgePage,
     TrainingPage,
-    KnowledgeDetailPage
+    KnowledgeDetailPage,
+    Questionnaire
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -87,12 +90,14 @@ const myFirebaseAuthConfig = {
     ProfilePage,
     KnowledgePage,
     TrainingPage,
-    KnowledgeDetailPage
+    KnowledgeDetailPage,
+    Questionnaire
   ],
   providers: [
     UserProvider,
     RootPageProvider,
-    TrainingProvider
+    TrainingProvider,
+    QuestionProvider
   ]
 })
 export class AppModule {}

@@ -11,7 +11,7 @@ import {TrainingProvider} from "../../providers/training-provider";
 @Component({
   templateUrl: 'knowledge-detail.html',
 })
-export class KnowledgeDetailPage {
+export class KnowledgeDetailPage{
 
   id: any;
   exerciseInfo: any;
@@ -19,12 +19,12 @@ export class KnowledgeDetailPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public trainingProvider: TrainingProvider) {
 
     this.exerciseInfo = this.navParams.get("exercise");
-    // this.id = navParams.get("id");
-    // this.exerciseInfo = {id:1, name:'Backstretching'};
+    this.id = navParams.get("id");
 
-    // this.trainingProvider.getSingleExercise(this.id).then(data => {
-    //   this.exerciseInfo = data;
-    // });
+
+    this.trainingProvider.getSingleExercise(this.id).then(data => {
+      this.exerciseInfo = data;
+    });
   }
 
 }
