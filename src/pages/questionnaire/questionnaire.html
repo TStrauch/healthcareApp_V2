@@ -12,7 +12,24 @@
 
 </ion-header>
 
+
 <ion-content padding>
+  <h3> {{counter + 1}} / {{length}}</h3>
+  <h2>{{actualQuestion.description}}</h2>
+  <br />
+  <ion-list [(ngModel)]="form" radio-group>
+    <ion-item *ngFor="let scaleElement of scale; let i = index;">
+      <ion-label>{{scaleElement.display}}</ion-label>
+      <ion-radio value="{{scaleElement.value}}"></ion-radio>
+    </ion-item>
+  </ion-list>
+
+  <div class="center">
+    <button [disabled]="!form" (click)="sendQuestion()" ion-button round>Send</button>
+  </div>
+  <!--
+
+   // tests of likert scale
 
 <form>
 
@@ -31,8 +48,7 @@
   </form>
 
 
-      <!--
-
+  
          <form>
 
     <item *ngFor="let question of questions; let i = index;">
@@ -63,6 +79,7 @@
         </label>
       </div>
 
-      </ion-item> --->
+      </ion-item> 
 
-    <button ion-button (click)="dismiss()">close</button>
+    <button ion-button (click)="dismiss()">close</button>--->
+</ion-content>
