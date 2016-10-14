@@ -23,9 +23,8 @@ export class TrainingPage {
   }
 
   showModal(category){
-    
+
     this.modal = this.modalCtrl.create(Questionnaire, category);
-    debugger;
     this.modal.present();
   }
 

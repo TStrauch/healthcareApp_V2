@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import {Platform, ModalController} from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
@@ -11,6 +11,7 @@ import {RootPageProvider} from "../providers/rootpage";
 
 
 import { Push, PushToken } from '@ionic/cloud-angular';
+import {AppealPage} from "../pages/appeal-page/appeal-page";
 
 
 @Component({
@@ -18,11 +19,13 @@ import { Push, PushToken } from '@ionic/cloud-angular';
 })
 export class MyApp {
   rootPage;
+  modal;
 
   constructor(platform: Platform,
               public push: Push,
               public af: AngularFire,
-              public rootPageProvider: RootPageProvider) {
+              public rootPageProvider: RootPageProvider,
+              public modalCtrl: ModalController) {
     firebase.initializeApp(firebaseconfig);
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -49,7 +52,18 @@ export class MyApp {
     });
     this.push.rx.notification()
       .subscribe((msg) => {
-        alert(msg.title + ': ' + msg.text);
+        //{"raw":{"message":"Get 150% off!","title":"Test Push","additionalData":
+        // {"payload":{"key":"pushValue"},"foreground":true,"coldstart":false}},
+        // "text":"Get 150% off!","title":"Test Push","app":{"asleep":false,"closed":false},
+        // "payload":{"key":"pushValue"}}
+        //access the payload:
+        //msg.payload.key
+        let payload: any = msg.payload;
+        this.modal = this.modalCtrl.create(AppealPage, {url: payload.url});
+        this.modal.present();
+
+        console.log("received push");
+        //alert(msg.title + ': ' + msg.text);
     });
 
     platform.ready().then(() => {

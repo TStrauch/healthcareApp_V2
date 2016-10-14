@@ -16,7 +16,10 @@ export class Questionnaire {
   category;
   questions;
 
-  constructor(public navCtrl: NavController, public params: NavParams, public viewCtrl: ViewController, public questionProvider: QuestionProvider) {
+  constructor(public navCtrl: NavController,
+              public params: NavParams,
+              public viewCtrl: ViewController,
+              public questionProvider: QuestionProvider) {
 
     this.category = this.params.get('category');
 

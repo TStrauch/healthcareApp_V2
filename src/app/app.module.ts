@@ -24,6 +24,7 @@ import {TrainingPage} from "../pages/training-page/training-page";
 import {KnowledgeDetailPage} from "../pages/knowledge-detail/knowledge-detail";
 import {Questionnaire} from "../pages/questionnaire/questionnaire";
 import {ChartsModule} from "ng2-charts/ng2-charts";
+import {AppealPage} from "../pages/appeal-page/appeal-page";
 
 // Import additional libraries
 
@@ -71,7 +72,8 @@ const myFirebaseAuthConfig = {
     KnowledgePage,
     TrainingPage,
     KnowledgeDetailPage,
-    Questionnaire
+    Questionnaire,
+    AppealPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -91,7 +93,8 @@ const myFirebaseAuthConfig = {
     KnowledgePage,
     TrainingPage,
     KnowledgeDetailPage,
-    Questionnaire
+    Questionnaire,
+    AppealPage
   ],
   providers: [
     UserProvider,
