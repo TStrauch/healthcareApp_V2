@@ -15,6 +15,8 @@ import {QuestionProvider} from "../../providers/question-provider";
 export class Questionnaire {
   category;
   questions;
+  scale;
+  answer;
 
   constructor(public navCtrl: NavController,
               public params: NavParams,
@@ -26,6 +28,16 @@ export class Questionnaire {
     this.questionProvider.getQuestions(this.category).then(data => {
       this.questions = data;
     });
+
+    this.scale = [
+    { value: '1', display: 'Strongly Agree' },
+    { value: '2', display: 'Agree' },
+    { value: '3', display: 'Agree somewhat' },
+    { value: '4', display: 'Undecided' },
+    { value: '5', display: 'Disagree somewhat' },
+    { value: '6', display: 'Disagree' },
+    { value: '7', display: 'Strongly disagree' }
+];
 
   }
 
