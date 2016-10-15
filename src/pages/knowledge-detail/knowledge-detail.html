@@ -7,7 +7,9 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{exerciseInfo.name}}</ion-title>
+    <ion-title><ion-icon (click)="dismiss()" name="arrow-back">Back</ion-icon>  {{exerciseInfo.name}}</ion-title>
+  
+    
   </ion-navbar>
 
 </ion-header>
@@ -15,5 +17,5 @@
 
 <ion-content padding>
 
-
+<button  (click)="dismiss()" ion-button round>Back</button>
 </ion-content>

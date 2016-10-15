@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController} from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 import {Exercise} from "../../model/exercise";
 import {KnowledgeDetailPage} from "../knowledge-detail/knowledge-detail";
@@ -16,9 +16,11 @@ import {KnowledgeDetailPage} from "../knowledge-detail/knowledge-detail";
 })
 export class KnowledgePage {
   exercises: Exercise[];
+  modalKnowledgeDetail: any;
 
   constructor(public navCtrl: NavController,
-              public trainingProvider: TrainingProvider
+              public trainingProvider: TrainingProvider,
+              public modalCtrl: ModalController
   ) {
     this.trainingProvider.getAllExercises().then(data => {
       this.exercises = data;
@@ -33,10 +35,16 @@ export class KnowledgePage {
     debugger;
   }
 
-  exerciseSelected(index) {
+
+exerciseSelected(id){
+    this.modalKnowledgeDetail = this.modalCtrl.create(KnowledgeDetailPage, {"id": id});
+    this.modalKnowledgeDetail.present();
+  }
+
+ /* exerciseSelected(index) {
     this.navCtrl.push(KnowledgeDetailPage, {
       exercise: this.exercises[index],
     });
-  }
+  } */
 
 }

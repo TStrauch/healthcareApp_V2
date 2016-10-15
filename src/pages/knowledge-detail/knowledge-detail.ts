@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, Platform, ViewController } from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 
 /*
@@ -11,20 +11,28 @@ import {TrainingProvider} from "../../providers/training-provider";
 @Component({
   templateUrl: 'knowledge-detail.html',
 })
-export class KnowledgeDetailPage{
+export class KnowledgeDetailPage {
 
   id: any;
   exerciseInfo: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public trainingProvider: TrainingProvider) {
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    public trainingProvider: TrainingProvider,
+    public viewCtrl: ViewController) {
 
-    this.exerciseInfo = this.navParams.get("exercise");
+    debugger;
+   // this.exerciseInfo = this.navParams.get("exercise");
     this.id = navParams.get("id");
 
 
     this.trainingProvider.getSingleExercise(this.id).then(data => {
       this.exerciseInfo = data;
     });
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
 }

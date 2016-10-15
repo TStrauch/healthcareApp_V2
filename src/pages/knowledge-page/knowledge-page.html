@@ -8,7 +8,7 @@
 
 <ion-content>
   <ion-list>
-    <button ion-item *ngFor="let exercise of exercises; let i = index;" (click)="exerciseSelected(i)">
+    <button ion-item *ngFor="let exercise of exercises; let i = index;" (click)="exerciseSelected(exercise.id)">
       {{exercise.description}}
     </button>
   </ion-list>
