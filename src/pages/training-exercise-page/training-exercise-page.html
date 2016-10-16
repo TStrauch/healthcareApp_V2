@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>training-exercise-page</ion-title>
+    <ion-title>Your Training!</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -15,4 +15,18 @@
 
 <ion-content padding>
 
+  <ion-card>
+  <img [src]="actualExercise.image"/>
+  <ion-card-content>
+    <ion-card-title>
+      {{actualExercise.name}}
+      </ion-card-title>
+    <p>
+      {{actualExercise.description}}
+    </p>
+  </ion-card-content>
+</ion-card>
+
+<h2 class="center">{{timer.text}}</h2>
+<button class="center" [disabled]="timer.runTimer && !timer.hasFinished "  (click)="start()" ion-button round>{{buttonText}}</button>
 </ion-content>

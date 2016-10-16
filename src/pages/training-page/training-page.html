@@ -24,7 +24,7 @@
   <ion-card *ngFor="let exercise of trainingData;">
     <ion-item>
       <ion-thumbnail item-left>
-        <img src="http://placehold.it/100x100">
+        <img class="verticalCenter" [src]="exercise.image">
       </ion-thumbnail>
       <h2>{{exercise.name}}</h2>
       <p>{{exercise.description}}</p>
@@ -33,6 +33,10 @@
 
 
 
-  <button class="center" (click)="start()" ion-button round>Start!</button>
+  <button class="center" (click)="openTrainingModal()" ion-button round>Start!</button>
+
+  <div class="center">
+    <button  (click)="openTrainingModal()" ion-button round>Start!</button>
+  </div>
 
 </ion-content>
