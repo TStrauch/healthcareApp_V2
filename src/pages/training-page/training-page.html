@@ -7,13 +7,32 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>TrainingPage</ion-title>
+    <ion-title>3min Training</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="showModal({category: 2})">
+        <ion-icon name="help"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <button ion-item (click)="showModal({category: 2})">Open Modal Window</button>
-  </ion-list>
+  <!--<ion-list>-->
+    <!--<button ion-item (click)="showModal({category: 2})">Open Modal Window</button>-->
+  <!--</ion-list>-->
+  <ion-card *ngFor="let exercise of trainingData;">
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="http://placehold.it/100x100">
+      </ion-thumbnail>
+      <h2>{{exercise.name}}</h2>
+      <p>{{exercise.description}}</p>
+    </ion-item>
+  </ion-card>
+
+
+
+  <button class="center" (click)="start()" ion-button round>Start!</button>
+
 </ion-content>

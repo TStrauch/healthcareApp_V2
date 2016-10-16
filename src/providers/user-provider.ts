@@ -8,10 +8,15 @@ import * as Rx from 'rxjs';
   See https://angular.io/docs/ts/latest/guide/dependency-injection.html
   for more info on providers and Angular 2 DI.
 */
+
+
+
 @Injectable()
 export class UserProvider {
   public fireAuth: any;
   public userProfile: any;
+
+  user: any = null;
 
   /**
    * public auth: Auth,
@@ -23,27 +28,92 @@ export class UserProvider {
     this.userProfile = firebase.database().ref('/userProfile');
   }
 
+  // getCurrentUserData(uid: string): any{
+  //   if(this.userData != null){
+  //     return Rx.Observable.create( (observer) => {
+  //       observer.next(this.userData);
+  //       observer.complete();
+  //     });
+  //   }
+  //   else{
+  //     var userRef = firebase.database().ref('userProfile/' + uid);
+  //
+  //     var responseStream = Rx.Observable.create( (observer) => {
+  //       userRef.on('value', (snapshot) => {
+  //         observer.next(snapshot.val())
+  //         observer.complete();
+  //       });
+  //     });
+  //
+  //     return responseStream;
+  //   }
+  // }
+
   getCurrentUser(): any{
-    return Rx.Observable.create( (observer) => {
-      this.fireAuth.onAuthStateChanged((user) => {
-        if(user){
-          observer.next(user);
-        }
-        else{
-          observer.error(null);
-        }
+    if(this.user != null){
+      return Rx.Observable.create( (observer) => {
+        observer.next(this.user);
         observer.complete();
       });
-    });
+    }
+    else{
+      return Rx.Observable.create( (observer) => {
+        this.fireAuth.onAuthStateChanged((user) => {
+          if(user){
+            var userRef = firebase.database().ref('userProfile/' + user.uid);
+            userRef.on('value', (snapshot) => {
+              observer.next(snapshot.val())
+              observer.complete();
+              this.user = snapshot.val();
+            });
+          }
+          else{
+            observer.error(null);
+            observer.complete();
+          }
+        });
+      });
+    }
   }
+
+
+  // getCurrentUser(): any{
+  //   if(this.user != null){
+  //     return Rx.Observable.create( (observer) => {
+  //       observer.next(this.user);
+  //       observer.complete();
+  //     });
+  //   }
+  //   else{
+  //     return Rx.Observable.create( (observer) => {
+  //       this.fireAuth.onAuthStateChanged((user) => {
+  //         if(user){
+  //           this.user = user;
+  //           observer.next(user);
+  //         }
+  //         else{
+  //           observer.error(null);
+  //         }
+  //         observer.complete();
+  //       });
+  //     });
+  //   }
+  // }
 
   loginUser(email: string, password: string): any {
     return this.fireAuth.signInWithEmailAndPassword(email, password);
   }
 
   signupUser(email: string, password: string): any {
-    //this one will be returned to the controller and called .next() once both logins returned
-    debugger;
+    return this.fireAuth.createUserWithEmailAndPassword(email, password).then((newUser) => {
+      this.fireAuth.signInWithEmailAndPassword(email, password).then((authenticatedUser) => {
+        this.userProfile.child(authenticatedUser.uid).set({
+          email: email,
+          training_count: 0
+        });
+      });
+    });
+
 
     // var finalLoginObserver: any;
     // var finalLoginStream = Rx.Observable.create( (observer) => {
@@ -113,6 +183,7 @@ export class UserProvider {
   }
 
   logoutUser(): any {
+    this.user = null;
     return this.fireAuth.signOut();
   }
 }

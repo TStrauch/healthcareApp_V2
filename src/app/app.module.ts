@@ -25,6 +25,7 @@ import {KnowledgeDetailPage} from "../pages/knowledge-detail/knowledge-detail";
 import {Questionnaire} from "../pages/questionnaire/questionnaire";
 import {ChartsModule} from "ng2-charts/ng2-charts";
 import {AppealPage} from "../pages/appeal-page/appeal-page";
+import {TrainingExercisePage} from "../pages/training-exercise-page/training-exercise-page";
 
 // Import additional libraries
 
@@ -71,6 +72,7 @@ const myFirebaseAuthConfig = {
     ProfilePage,
     KnowledgePage,
     TrainingPage,
+    TrainingExercisePage,
     KnowledgeDetailPage,
     Questionnaire,
     AppealPage
@@ -92,6 +94,7 @@ const myFirebaseAuthConfig = {
     ProfilePage,
     KnowledgePage,
     TrainingPage,
+    TrainingExercisePage,
     KnowledgeDetailPage,
     Questionnaire,
     AppealPage

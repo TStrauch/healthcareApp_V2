@@ -23,9 +23,9 @@ export class Questionnaire {
   form;
 
   constructor(public navCtrl: NavController,
-    public params: NavParams,
-    public viewCtrl: ViewController,
-    public questionProvider: QuestionProvider) {
+              public params: NavParams,
+              public viewCtrl: ViewController,
+              public questionProvider: QuestionProvider) {
 
     this.category = this.params.get('category');
 
@@ -56,10 +56,10 @@ export class Questionnaire {
     //---------------------------------------------
     //Add here the sending to firebase, if structure is clear
     //---------------------------------------------
-     
+
      console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
 
-    
+
     if (this.counter < (this.length -1)) {
       this.counter++;
       this.actualQuestion = this.questions[this.counter];

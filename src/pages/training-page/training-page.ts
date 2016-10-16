@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController } from 'ionic-angular';
 import {Questionnaire} from '../questionnaire/questionnaire'
+import {TrainingExercisePage} from "../training-exercise-page/training-exercise-page";
+import {TrainingProvider} from "../../providers/training-provider";
+import {UserProvider} from "../../providers/user-provider";
+import {Exercise} from "../../model/exercise";
 
 /*
   Generated class for the TrainingPage page.
@@ -15,8 +19,21 @@ import {Questionnaire} from '../questionnaire/questionnaire'
 export class TrainingPage {
 
   modal: any;
+  trainingData: Exercise[];
 
-  constructor(public navCtrl: NavController, public modalCtrl: ModalController) {}
+  constructor(public navCtrl: NavController,
+              public modalCtrl: ModalController,
+              public userProvider: UserProvider,
+              public trainingProvider: TrainingProvider) {
+
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
+        this.trainingData = trainingSet;
+        console.log(this.trainingData);
+      })
+    });
+
+  }
 
   ionViewDidLoad() {
     console.log('Hello TrainingPage Page');
@@ -26,6 +43,10 @@ export class TrainingPage {
 
     this.modal = this.modalCtrl.create(Questionnaire, category);
     this.modal.present();
+  }
+
+  start(){
+    // this.modal = this.modalCtrl.create(TrainingExercisePage, initial)
   }
 
 }

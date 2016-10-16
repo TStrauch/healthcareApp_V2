@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {EXERCISES} from "./mock/training-data";
+import {EXERCISES, TRAINING_DAT} from "./mock/training-data";
 
 
 
@@ -20,6 +20,23 @@ export class TrainingProvider {
      return Promise.resolve(EXERCISES).then(
         exerciseList => exerciseList.filter(singleExercise => singleExercise.id === id)[0]
    );
+  }
+
+  getNewTraining(index: number): any{
+
+    let max = TRAINING_DAT.count_per_category;
+
+    let e1 = TRAINING_DAT.category_one[index % max];
+    let e2 = TRAINING_DAT.category_two[index % max];
+    let e3 = TRAINING_DAT.category_three[index % max];
+
+    let trainingSet = [
+      e1,
+      e2,
+      e3
+    ];
+
+    return Promise.resolve(trainingSet);
   }
 
 }
