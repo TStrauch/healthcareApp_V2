@@ -36,15 +36,15 @@ export class KnowledgePage {
   }
 
 
-exerciseSelected(id){
-    this.modalKnowledgeDetail = this.modalCtrl.create(KnowledgeDetailPage, {"id": id});
-    this.modalKnowledgeDetail.present();
-  }
+// exerciseSelected(id){
+//     this.modalKnowledgeDetail = this.modalCtrl.create(KnowledgeDetailPage, {"id": id});
+//     this.modalKnowledgeDetail.present();
+//   }
 
- /* exerciseSelected(index) {
+ exerciseSelected(index) {
     this.navCtrl.push(KnowledgeDetailPage, {
       exercise: this.exercises[index],
     });
-  } */
+  }
 
 }

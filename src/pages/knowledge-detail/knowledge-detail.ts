@@ -21,18 +21,17 @@ export class KnowledgeDetailPage {
     public trainingProvider: TrainingProvider,
     public viewCtrl: ViewController) {
 
-    debugger;
-   // this.exerciseInfo = this.navParams.get("exercise");
-    this.id = navParams.get("id");
-
-
-    this.trainingProvider.getSingleExercise(this.id).then(data => {
-      this.exerciseInfo = data;
-    });
+   this.exerciseInfo = this.navParams.get("exercise");
+   //  this.id = navParams.get("id");
+   //
+   //
+   //  this.trainingProvider.getSingleExercise(this.id).then(data => {
+   //    this.exerciseInfo = data;
+   //  });
   }
 
-  dismiss() {
-    this.viewCtrl.dismiss();
-  }
+  // dismiss() {
+  //   this.viewCtrl.dismiss();
+  // }
 
 }
