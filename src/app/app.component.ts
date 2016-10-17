@@ -3,13 +3,14 @@ import {Platform, ModalController} from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
+import {IntroductionPage} from '../pages/introduction-page/introduction-page';
 import { AngularFire } from 'angularfire2'
 import firebase from 'firebase';
 import {firebaseconfig} from "./app.module";
 import {TabsPage} from "../pages/tabs-page/tabs-page";
 import {RootPageProvider} from "../providers/rootpage";
 
-
+import { NativeStorage } from 'ionic-native';
 import { Push, PushToken } from '@ionic/cloud-angular';
 import {AppealPage} from "../pages/appeal-page/appeal-page";
 
@@ -22,10 +23,10 @@ export class MyApp {
   modal;
 
   constructor(platform: Platform,
-              public push: Push,
-              public af: AngularFire,
-              public rootPageProvider: RootPageProvider,
-              public modalCtrl: ModalController) {
+    public push: Push,
+    public af: AngularFire,
+    public rootPageProvider: RootPageProvider,
+    public modalCtrl: ModalController) {
     firebase.initializeApp(firebaseconfig);
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -35,8 +36,13 @@ export class MyApp {
 
         console.log("I'm here! HomePage");
       } else {
-        this.rootPage = LoginPage;
-        console.log("I'm here! LoginPage");
+        NativeStorage.getItem('introduction')
+          .then(
+          this.rootPage = LoginPage,
+          this.rootPage = IntroductionPage
+          );
+
+        //console.log("I'm here! IntroductionPage");
       }
     });
 
@@ -59,12 +65,12 @@ export class MyApp {
         //access the payload:
         //msg.payload.key
         let payload: any = msg.payload;
-        this.modal = this.modalCtrl.create(AppealPage, {url: payload.url});
+        this.modal = this.modalCtrl.create(AppealPage, { url: payload.url });
         this.modal.present();
 
         console.log("received push");
         //alert(msg.title + ': ' + msg.text);
-    });
+      });
 
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
