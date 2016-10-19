@@ -81,6 +81,8 @@ export class MyApp {
         //access the payload:
         //msg.payload.key
         let payload: any = msg.payload;
+        console.log(payload);
+        console.log(payload.url);
         this.modal = this.modalCtrl.create(AppealPage, { url: payload.url });
         this.modal.present();
 

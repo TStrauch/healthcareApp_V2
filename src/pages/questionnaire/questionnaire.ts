@@ -67,7 +67,8 @@ export class Questionnaire {
 
     }
     else {
-      this.viewCtrl.dismiss();
+      // this.viewCtrl.dismiss();
+      this.navCtrl.push(Questionnaire, {category: 2});
     }
 
   }
