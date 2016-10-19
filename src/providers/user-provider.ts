@@ -68,7 +68,7 @@ export class UserProvider {
             });
           }
           else{
-            observer.error(null);
+            observer.next(null);
             observer.complete();
           }
         });

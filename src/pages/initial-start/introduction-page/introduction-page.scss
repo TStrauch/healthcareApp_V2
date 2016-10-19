@@ -5,4 +5,35 @@ page-introduction-page {
     margin-right: auto;
     display: block;
   }
+
+  .color-secondary{
+    //background : color($colors, secondary);
+  }
+
+  h1{
+    font-weight: 200;
+    font-size: 5rem;
+    margin-top: 4rem !important;
+    text-align: center;
+  }
+
+  p{
+    font-weight: 200;
+
+    &.main{
+      font-size: 2rem;
+      margin-top: 3rem;
+    }
+
+    &.info{
+      font-size: 1.5rem;
+      margin-top: 0.5rem;
+      text-align: center;
+
+      //does not work
+      //&:first-of-type{
+      //  margin-top: 3rem;
+      //}
+    }
+  }
 }

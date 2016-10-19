@@ -51,6 +51,7 @@ export class LoginPage implements RootPage{
 
     //set default values for nav Params if necessary
     if(!this.loginDoneNavOptions){
+      this.loginDoneNavOptions = {};
       this.loginDoneNavOptions.page = TabsPage;
       this.loginDoneNavOptions.navParams = {};
       this.loginDoneNavOptions.navOpt = {};

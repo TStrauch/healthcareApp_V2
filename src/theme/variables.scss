@@ -13,6 +13,8 @@
 $text-color:        #000;
 $background-color:  #fff;
 
+$font-family-base: 'Titillium Web', sans-serif;
+
 
 // Named Color Variables
 // --------------------------------------------------
@@ -24,12 +26,15 @@ $background-color:  #fff;
 
 $colors: (
   primary:    #387ef5,
-  secondary:  #32db64,
+  secondary:  #89fff5,
   danger:     #f53d3d,
   light:      #f4f4f4,
   dark:       #222,
   favorite:   #69BB7B
 );
+
+// possible colors:
+$color_1: #6feae0;
 
 
 // App Theme

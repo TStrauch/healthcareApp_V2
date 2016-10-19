@@ -4,6 +4,7 @@ import {TrainingPage} from "../training-page/training-page";
 import {ProfilePage} from "../profile-page/profile-page";
 import {KnowledgePage} from "../knowledge-page/knowledge-page";
 import {RootPage} from "../../interfaces/RootPage";
+import { Push, PushToken } from '@ionic/cloud-angular';
 
 /*
   Generated class for the TabsPage page.
@@ -19,10 +20,19 @@ export class TabsPage implements RootPage{
   public tab2Root: any;
   public tab3Root: any;
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController,
+              public push: Push) {
     this.tab1Root = TrainingPage;
     this.tab2Root = ProfilePage;
     this.tab3Root = KnowledgePage;
+
+    //make sure push is enabled.
+    //todo: add the implementation from IntroductionPage that makes sure that push notifactions are actually allowed.
+    this.push.register().then((t: PushToken) => {
+      return this.push.saveToken(t);
+    }).then((t: PushToken) => {
+      console.log('Token saved:', t.token);
+    });
   }
 
   ionViewDidLoad() {

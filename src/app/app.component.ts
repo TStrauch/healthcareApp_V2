@@ -14,6 +14,7 @@ import { NativeStorage } from 'ionic-native';
 import { Push, PushToken } from '@ionic/cloud-angular';
 import {AppealPage} from "../pages/appeal-page/appeal-page";
 import {Signup} from "../pages/signup/signup";
+import {UserProvider} from "../providers/user-provider";
 
 
 @Component({
@@ -40,14 +41,24 @@ export class MyApp {
     //     this.nav.push(IntroductionPage);
     //   }
     // });
-    this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+    this.userProvider.getCurrentUser().subscribe((user) => {
+        if (user) {
+          this.rootPageProvider.setRootPage(TabsPage, {}, {});
+        } else {
+          this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
+        }
+    });
+
+    // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
   }
 
   constructor(platform: Platform,
-    public push: Push,
-    public af: AngularFire,
-    public rootPageProvider: RootPageProvider,
-    public modalCtrl: ModalController) {
+              public push: Push,
+              public af: AngularFire,
+              public rootPageProvider: RootPageProvider,
+              public modalCtrl: ModalController,
+              public userProvider: UserProvider) {
+
     firebase.initializeApp(firebaseconfig);
 
 
@@ -60,11 +71,7 @@ export class MyApp {
       this.nav.setRoot(newRootPage, navParams, navOpt);
     })
 
-    this.push.register().then((t: PushToken) => {
-      return this.push.saveToken(t);
-    }).then((t: PushToken) => {
-      console.log('Token saved:', t.token);
-    });
+
     this.push.rx.notification()
       .subscribe((msg) => {
         //{"raw":{"message":"Get 150% off!","title":"Test Push","additionalData":
@@ -85,6 +92,7 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
+
     });
   }
 }
