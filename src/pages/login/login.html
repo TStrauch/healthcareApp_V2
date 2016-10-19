@@ -37,7 +37,7 @@
 
   </form>
 
-  <button ion-button block clear (click)="goToSignup()">
+  <button *ngIf="isInitialView" ion-button block clear (click)="goToSignup()">
     Create a new account
   </button>
 

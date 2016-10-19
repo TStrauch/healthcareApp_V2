@@ -94,7 +94,7 @@ export class ProfilePage {
 
   logOut(){
     this.userProvider.logoutUser().then(() => {
-      this.rootPageProvider.setRootPage(LoginPage);
+      this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
     });
   }
 

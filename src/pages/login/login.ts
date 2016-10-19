@@ -1,7 +1,8 @@
 import {
   NavController,
   LoadingController,
-  AlertController } from 'ionic-angular';
+  AlertController, NavParams
+} from 'ionic-angular';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Signup } from '../signup/signup';
@@ -23,8 +24,10 @@ export class LoginPage implements RootPage{
   passwordChanged: boolean = false;
   submitAttempt: boolean = false;
   loading: any;
+  isInitialView: boolean = false;
+  loginDoneNavOptions: any;
 
-  constructor(public nav: NavController, public authData: UserProvider, public formBuilder: FormBuilder,
+  constructor(public nav: NavController, public navParams: NavParams, public authData: UserProvider, public formBuilder: FormBuilder,
               public alertCtrl: AlertController, public loadingCtrl: LoadingController,
               public rootPageProvider: RootPageProvider) {
 
@@ -38,6 +41,21 @@ export class LoginPage implements RootPage{
     //   email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
     //   password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
     // });
+    //read nav Params
+    if(navParams.get("initial")){
+      this.isInitialView = navParams.get("initial");
+    }
+    if(navParams.get("loginDoneNavOptions")){
+      this.loginDoneNavOptions = navParams.get("loginDoneNavOptions");
+    }
+
+    //set default values for nav Params if necessary
+    if(!this.loginDoneNavOptions){
+      this.loginDoneNavOptions.page = TabsPage;
+      this.loginDoneNavOptions.navParams = {};
+      this.loginDoneNavOptions.navOpt = {};
+    }
+
     this.loginForm = formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
@@ -69,7 +87,7 @@ export class LoginPage implements RootPage{
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password).then( authData => {
         // this.nav.setRoot(HomePage);
         // this.nav.setRoot(TabsPage);
-        this.rootPageProvider.setRootPage(TabsPage);
+        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
       }, error => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({
@@ -93,7 +111,7 @@ export class LoginPage implements RootPage{
   }
 
   goToSignup(){
-    this.nav.push(Signup);
+    this.nav.push(Signup, {"initial" : !this.isInitialView, "loginDoneNavOptions": this.loginDoneNavOptions}, {});
   }
 
   goToResetPassword(){

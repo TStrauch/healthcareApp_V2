@@ -37,4 +37,8 @@
 
   </form>
 
+  <button *ngIf="isInitialView" ion-button block clear (click)="goToLogin()">
+    Login instead
+  </button>
+
 </ion-content>

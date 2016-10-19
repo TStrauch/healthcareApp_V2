@@ -18,7 +18,11 @@ export class RootPageProvider {
     return this.rootPageStream;
   }
 
-  setRootPage(pta: any){
-    this.rootPageObserver.next(pta);
+  setRootPage(pta: any, navParams: any, navOpt: any){
+    this.rootPageObserver.next({
+      "rootPage": pta,
+      "navParams": navParams,
+      "navOpt": navOpt
+    });
   }
 }

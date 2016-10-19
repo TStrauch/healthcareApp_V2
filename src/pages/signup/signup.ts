@@ -1,11 +1,15 @@
 import {
   NavController,
   LoadingController,
-  AlertController } from 'ionic-angular';
+  AlertController, NavParams
+} from 'ionic-angular';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HomePage } from '../home/home';
 import {UserProvider} from "../../providers/user-provider";
+import {RootPageProvider} from "../../providers/rootpage";
+import {LoginPage} from "../login/login";
+import {TabsPage} from "../tabs-page/tabs-page";
 
 /*
   Generated class for the Signup page.
@@ -23,12 +27,31 @@ export class Signup {
   passwordChanged: boolean = false;
   submitAttempt: boolean = false;
   loading: any;
+  isInitialView: boolean;
+  loginDoneNavOptions: any;
 
   constructor(public nav: NavController,
+              public navParams: NavParams,
               public userProvider: UserProvider,
               public formBuilder: FormBuilder,
               public loadingCtrl: LoadingController,
-              public alertCtrl: AlertController) {
+              public alertCtrl: AlertController,
+              public rootPageProvider: RootPageProvider) {
+
+    //read nav Params
+    if(navParams.get("initial")){
+      this.isInitialView = navParams.get("initial");
+    }
+    if(navParams.get("loginDoneNavOptions")){
+      this.loginDoneNavOptions = navParams.get("loginDoneNavOptions");
+    }
+
+    //set default values for nav Params if necessary
+    if(!this.loginDoneNavOptions){
+      this.loginDoneNavOptions.page = TabsPage;
+      this.loginDoneNavOptions.navParams = {};
+      this.loginDoneNavOptions.navOpt = {};
+    }
 
     this.signupForm = formBuilder.group({
       email: ['', Validators.required],
@@ -53,8 +76,7 @@ export class Signup {
       console.log(this.signupForm.value);
     } else {
       this.userProvider.signupUser(this.signupForm.value.email, this.signupForm.value.password).then(() => {
-
-        this.nav.setRoot(HomePage);
+        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
       }, (error) => {
         this.loading.dismiss();
         let alert = this.alertCtrl.create({
@@ -74,6 +96,11 @@ export class Signup {
       });
       this.loading.present();
     }
+  }
+
+
+  goToLogin(){
+    this.nav.push(LoginPage, {"initial" : !this.isInitialView, "loginDoneNavOptions": this.loginDoneNavOptions}, {});
   }
 
 
