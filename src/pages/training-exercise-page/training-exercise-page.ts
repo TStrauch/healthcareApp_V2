@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,trigger, state, style, transition, animate, keyframes } from '@angular/core';
 import { NavController, ViewController } from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 import {UserProvider} from "../../providers/user-provider";
@@ -13,7 +13,19 @@ import {Exercise} from "../../model/exercise";
 */
 @Component({
   selector: 'page-training-exercise-page',
-  templateUrl: 'training-exercise-page.html'
+  templateUrl: 'training-exercise-page.html',
+  animations: [
+    trigger('slideInOut', [
+      state('in', style({
+        transform: 'translate3d(0, 0, 0)'
+      })),
+      state('out', style({
+        transform: 'translate3d(130%, 0 , 0)'
+      })),
+      transition('in => out', animate('400ms ease-in-out')),
+      transition('out => in', animate('400ms ease-in-out'))
+    ]),
+  ]
 })
 export class TrainingExercisePage {
   counter: any;
@@ -22,6 +34,7 @@ export class TrainingExercisePage {
   timer;
   buttonText;
   clockText;
+  cardState;
 
 
   constructor(public navCtrl: NavController,
@@ -34,6 +47,7 @@ export class TrainingExercisePage {
         this.buttonText = "Start Exercise";
         this.counter = 0
         this.trainingData = trainingSet;
+        this.cardState = 'in'; 
         this.actualExercise = this.trainingData[this.counter];
         // -----------  
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
@@ -44,12 +58,20 @@ export class TrainingExercisePage {
     });
   }
 
+ flyIn(){
+    if(this.cardState == 'out'){
+    this.actualExercise = this.trainingData[this.counter];
+    this.cardState = 'in'; 
+    }
+  }
+
   start() {
     // Move to next exercise, when counter is finished and the user clicks on the button
     if (this.timer.hasFinished) {
       this.counter++;
       if (this.counter < 3) {
-        this.actualExercise = this.trainingData[this.counter];
+        this.cardState = 'out';
+        //this.actualExercise = this.trainingData[this.counter];
         this.buttonText = "Start Exercise"
         this.initTimer();
       } else {

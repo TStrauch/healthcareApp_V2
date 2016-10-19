@@ -15,7 +15,7 @@
 
 <ion-content padding>
 
-  <ion-card>
+  <ion-card [@slideInOut]="cardState" (@slideInOut.done)="flyIn()">
   <img [src]="actualExercise.image"/>
   <ion-card-content>
     <ion-card-title>

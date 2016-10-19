@@ -13,6 +13,7 @@ export declare class TrainingExercisePage {
     timer: any;
     buttonText: any;
     clockText: any;
+    cardState: any;
     constructor(navCtrl: NavController, userProvider: UserProvider, trainingProvider: TrainingProvider, viewCtrl: ViewController);
     start(): void;
     setButtonText(): void;
