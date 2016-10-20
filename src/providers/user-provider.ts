@@ -17,6 +17,7 @@ export class UserProvider {
   public userProfile: any;
 
   user: any = null;
+ 
 
   /**
    * public auth: Auth,
@@ -62,9 +63,11 @@ export class UserProvider {
           if(user){
             var userRef = firebase.database().ref('userProfile/' + user.uid);
             userRef.on('value', (snapshot) => {
-              observer.next(snapshot.val())
+              var tempUser = snapshot.val();
+              tempUser.uid = user.uid;
+              observer.next(tempUser)
               observer.complete();
-              this.user = snapshot.val();
+              this.user = tempUser;
             });
           }
           else{

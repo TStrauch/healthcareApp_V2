@@ -59,17 +59,17 @@ export class InitialQuestionnaire {
 
   submit() {
 
-    /* // Email not working as path, use UID?
+     // Email not working as path, use UID?
         this.userProvider.getCurrentUser().subscribe((user) => {
           debugger;
-          this.userRef = firebase.database().ref('dataLog/' + user.email); 
+          this.userRef = firebase.database().ref('dataLog/' + user.uid); 
           this.userRef.set({
             age: this.questionnaire.value.age,
             gender: this.questionnaire.value.gender,
             major: this.questionnaire.value.major
           });
         })
-    */
+    
 
     this.rootPageProvider.setRootPage(TabsPage, {}, { "animate": true, "direction": "exit" });
   }

@@ -50,7 +50,7 @@ export class MyApp {
         } else {
           this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
         } 
-    });
+    }); 
 
     // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
   }
