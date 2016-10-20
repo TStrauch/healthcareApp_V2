@@ -15,7 +15,37 @@
 
 <ion-content padding>
 
-  <button class="center" (click)="submit()" ion-button round>Submit</button>
+  <form [formGroup]="questionnaire" (ngSubmit)="submit()">
+    <ion-item>
+      <ion-label>Age</ion-label>
+      <ion-input type="number" formControlName="age"></ion-input>
+    </ion-item>
+
+   <!---- <ion-item *ngIf="!slideOneForm.controls.firstName.valid  && (firstNameChanged || submitAttempt)">
+      <p>Please enter a valid name.</p>
+    </ion-item> --->
+
+
+    <ion-item>
+      <ion-label>Gender</ion-label>
+      <ion-select formControlName="gender">
+        <ion-option *ngFor="let g of gender" [value]="g.value">{{g.display}}</ion-option>
+      </ion-select>
+    </ion-item>
+
+ 
+
+    <ion-item>
+      <ion-label>Major</ion-label>
+      <ion-select formControlName="major">
+        <ion-option *ngFor="let m of major" [value]="m.value">{{m.display}}</ion-option>
+      </ion-select>
+    </ion-item>
+
+
+
+    <br />
+    <button class="center" ion-button type="submit" [disabled]="!questionnaire.valid">Send</button>
+  </form>
 
 </ion-content>
-

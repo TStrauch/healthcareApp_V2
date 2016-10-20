@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {RootPageProvider} from "../../../providers/rootpage";
 import {TabsPage} from "../../tabs-page/tabs-page";
+import {Validators, FormBuilder } from '@angular/forms';
+import {UserProvider} from "../../../providers/user-provider";
+import 'rxjs/add/operator/map';
+import * as Rx from 'rxjs';
 
 /*
   Generated class for the InitialQuestionnaire page.
@@ -14,17 +18,60 @@ import {TabsPage} from "../../tabs-page/tabs-page";
   templateUrl: 'initial-questionnaire.html'
 })
 export class InitialQuestionnaire {
+  gender: any;
+  major: any;
+  questionnaire: any;
+  fireAuth: any;
+  userRef: any;
+
 
   constructor(public navCtrl: NavController,
-              public rootPageProvider: RootPageProvider) {}
+    public rootPageProvider: RootPageProvider,
+    public formBuilder: FormBuilder,
+    public userProvider: UserProvider
+  ) {
+
+    this.fireAuth = firebase.auth();
+
+
+    this.questionnaire = formBuilder.group({
+      age: ['', Validators.compose([Validators.maxLength(2), Validators.pattern('[0-9]*'), Validators.required])],
+      gender: ['', Validators.required],
+      major: ['', Validators.required]
+    });
+
+    // Set possibile selections for form
+    this.gender = [
+      { value: 'm', display: 'Male' },
+      { value: 'f', display: 'Female' },
+    ];
+    this.major = [
+      { value: 'economics', display: 'Economics' },
+      { value: 'business', display: 'Business' },
+      { value: 'science', display: 'Science' }
+    ];
+  }
 
   ionViewDidLoad() {
     console.log('Hello InitialQuestionnaire Page');
 
   }
 
-  submit(){
-    this.rootPageProvider.setRootPage(TabsPage, {}, {"animate": true, "direction": "exit"});
+  submit() {
+
+    /* // Email not working as path, use UID?
+        this.userProvider.getCurrentUser().subscribe((user) => {
+          debugger;
+          this.userRef = firebase.database().ref('dataLog/' + user.email); 
+          this.userRef.set({
+            age: this.questionnaire.value.age,
+            gender: this.questionnaire.value.gender,
+            major: this.questionnaire.value.major
+          });
+        })
+    */
+
+    this.rootPageProvider.setRootPage(TabsPage, {}, { "animate": true, "direction": "exit" });
   }
 
 }

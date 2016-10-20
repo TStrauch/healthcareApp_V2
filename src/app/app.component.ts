@@ -4,6 +4,7 @@ import { StatusBar } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
 import {IntroductionPage} from '../pages/initial-start/introduction-page/introduction-page';
+import {InitialQuestionnaire} from '../pages/initial-start/initial-questionnaire/initial-questionnaire';
 import { AngularFire } from 'angularfire2'
 import firebase from 'firebase';
 import {firebaseconfig} from "./app.module";
@@ -41,12 +42,14 @@ export class MyApp {
     //     this.nav.push(IntroductionPage);
     //   }
     // });
+
+    //this.rootPageProvider.setRootPage(InitialQuestionnaire, {}, {});
     this.userProvider.getCurrentUser().subscribe((user) => {
         if (user) {
           this.rootPageProvider.setRootPage(TabsPage, {}, {});
         } else {
           this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-        }
+        } 
     });
 
     // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
