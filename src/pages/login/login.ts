@@ -85,11 +85,11 @@ export class LoginPage implements RootPage{
     if (!this.loginForm.valid){
       console.log(this.loginForm.value);
     } else {
-      this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password).then( authData => {
+      this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password).subscribe( (authData) => {
         // this.nav.setRoot(HomePage);
         // this.nav.setRoot(TabsPage);
         this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
-      }, error => {
+      }, (error) => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({
             message: error.message,

@@ -27,7 +27,6 @@ export class TabsPage implements RootPage{
     this.tab3Root = KnowledgePage;
 
     //make sure push is enabled.
-    //todo: add the implementation from IntroductionPage that makes sure that push notifactions are actually allowed.
     this.push.register().then((t: PushToken) => {
       return this.push.saveToken(t);
     }).then((t: PushToken) => {

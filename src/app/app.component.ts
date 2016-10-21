@@ -12,11 +12,12 @@ import {TabsPage} from "../pages/tabs-page/tabs-page";
 import {RootPageProvider} from "../providers/rootpage";
 
 import { NativeStorage } from 'ionic-native';
-import { Push, PushToken } from '@ionic/cloud-angular';
+import {Push, PushToken} from '@ionic/cloud-angular';
 import {AppealPage} from "../pages/appeal-page/appeal-page";
 import {Signup} from "../pages/signup/signup";
 import {UserProvider} from "../providers/user-provider";
 
+import * as Rx from 'rxjs';
 
 @Component({
   template: `<ion-nav #mainNav [root]="rootPage"></ion-nav>`
@@ -44,13 +45,15 @@ export class MyApp {
     // });
 
     //this.rootPageProvider.setRootPage(InitialQuestionnaire, {}, {});
+
+
     this.userProvider.getCurrentUser().subscribe((user) => {
         if (user) {
           this.rootPageProvider.setRootPage(TabsPage, {}, {});
         } else {
           this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-        } 
-    }); 
+        }
+    });
 
     // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
   }
