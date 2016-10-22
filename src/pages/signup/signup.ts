@@ -75,7 +75,7 @@ export class Signup {
     if (!this.signupForm.valid){
       console.log(this.signupForm.value);
     } else {
-      this.userProvider.signupUser(this.signupForm.value.email, this.signupForm.value.password).subscribe((success) => {
+      this.userProvider.signupUser(this.signupForm.value.email, this.signupForm.value.password).subscribe(() => {
         this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
       }, (error) => {
         this.loading.dismiss();

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Http, RequestOptions, Request, RequestMethod, Headers} from '@angular/http';
 import 'rxjs/add/operator/map';
 import * as Rx from 'rxjs';
 import {Auth, User, UserDetails, IDetailedError} from '@ionic/cloud-angular';
@@ -14,17 +15,24 @@ import {Auth, User, UserDetails, IDetailedError} from '@ionic/cloud-angular';
 
 @Injectable()
 export class UserProvider {
+
   public fireAuth: any;
   public userProfile: any;
 
   user: any = null;
 
+  //constants
+  public readonly IONIC_INVALID_PASSWORD = "Invalid password";
+  private readonly IONIC_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MDg0YzM4OS0zNGMxLTQxNTYtYTExMS01MGM4ZmYxMDMxMGUifQ.dQE35KrPq7WJS6hA075eP3vlc-3y7io9VxGBgYpJnU4';
 
   /**
    * public auth: Auth,
    public user: User
    */
-    constructor(public auth: Auth, public ionicUser: User) {
+    constructor(public auth: Auth,
+                public ionicUser: User,
+                public http: Http) {
+
     this.fireAuth = firebase.auth();
     this.userProfile = firebase.database().ref('/userProfile');
   }
@@ -43,10 +51,11 @@ export class UserProvider {
             var userRef = firebase.database().ref('userProfile/' + user.uid);
             userRef.on('value', (snapshot) => {
               var tempUser = snapshot.val();
-              tempUser.uid = user.uid;
-              observer.next(tempUser)
-              observer.complete();
+              // tempUser.uid = user.uid;
               this.user = tempUser;
+              this.user.uid = user.uid;
+              observer.next(this.user)
+              observer.complete();
             });
           }
           else{
@@ -64,8 +73,7 @@ export class UserProvider {
    * @param password
    * @returns {any}
    *
-   * subscribe to this with loginUser.subscribe(() => {}, (err) => {});
-     */
+   */
   loginUser(email: string, password: string): any {
 
     var returnObserver;
@@ -79,8 +87,48 @@ export class UserProvider {
           returnObserver.next();
           returnObserver.complete();
         }, (error) => {
-          returnObserver.error(error);
-          returnObserver.complete();
+          //we should never arrive here. if we do this can have three reasons:
+          //1. ionic api is not available (while firebase is)
+          //2. the user changed the password on firebase through the password reset function.
+          //3. some admin related error (such as deleting the ionic account but leaving the firebase one)
+          //we will decide what type of error it is depending on the "error" object given into the callback
+          //apparently ionic does not give some technical id for the type of error. only the message tells us the error
+          //the problem with that is that they might change the message and the following logic will break then...
+
+          let msg = error.response.body.error.message;
+          if(msg == this.IONIC_INVALID_PASSWORD){
+            // this seems to be error type 2.
+            // delete the ionic account and create a new one.
+            // make sure to set the test group property (take from firebase user)
+            // also get the ionic uuid from the firebase user object
+            this.getCurrentUser().subscribe((user) => {
+              this.__deleteIonicAccount(user.ionic_uuid).subscribe(() => {
+                this.__onlyIonicSignup(email, password, user.experiment_group_id).subscribe(() => {
+                  this.__onlyIonicLogin(email, password).subscribe(() => {
+                    //now set the new ionic uuid to the firebase object
+                    var userRef = firebase.database().ref('userProfile/' + user.uid);
+                    userRef.child('ionic_uuid').set(this.ionicUser.id);
+
+                    returnObserver.next();
+                    returnObserver.complete();
+                  }, (error) => {
+                    returnObserver.error(error);
+                    returnObserver.complete();
+                  })
+                }, (error) => {
+                  returnObserver.error(error);
+                  returnObserver.complete();
+                })
+              }, (error) => {
+                returnObserver.error(error);
+                returnObserver.complete();
+              })
+            })
+          }
+          else {
+            returnObserver.error(error);
+            returnObserver.complete();
+          }
         });
     }, (error) => {
       returnObserver.error(error);
@@ -93,87 +141,48 @@ export class UserProvider {
     // return this.fireAuth.signInWithEmailAndPassword(email, password);
   }
 
+
+
   /**
    *
    * @param email
    * @param password
    * @returns {any}
-   *
-   * TODO: SIMPLIFY!!! JUST WRAP THE PROMISES INTO A OBSERVABLE --> CONSISTENCY
-     */
+   */
   signupUser(email: string, password: string): any {
-    // return this.fireAuth.createUserWithEmailAndPassword(email, password).then((newUser) => {
-    //   this.fireAuth.signInWithEmailAndPassword(email, password).then((authenticatedUser) => {
-    //     this.userProfile.child(authenticatedUser.uid).set({
-    //       email: email,
-    //       training_count: 0
-    //     });
-    //   });
-    // });
-
-    var finalLoginObserver: any;
-    var finalLoginStream = Rx.Observable.create( (observer) => {
-      finalLoginObserver = observer;
+    var returnObserver;
+    let returnStream = Rx.Observable.create((observer) => {
+      returnObserver = observer;
     });
 
-    //this one will be used to call next on by each auth-provider (firebase, ionic) once completed
-    //it is used to collect the results and inform finalLoginObserver once all signup-requests have been completed
-    var tmpLoginObserver: any;
-    var tmpLoginStream = Rx.Observable.create( (observer) => {
-      tmpLoginObserver = observer;
-    });
+    //first create the firebase user
+    this.fireAuth.createUserWithEmailAndPassword(email, password).then((newUser) => {
 
-    //here we subscribe to the tmpLoginStream and collect the results from the different auth-providers
-    var allRequestsSuccessful: boolean = true;
-    var requestsFinishedCounter = 0;
-    let numberOfSignupRequestsFired = 2;
-    tmpLoginStream.subscribe((loginFinishedBool) => {
+      //now create the ionic user
+      let details: UserDetails = {'email': email, 'password': password, 'name': 'Experiment_id_placeholder'};
+      this.auth.signup(details).then(() => {
 
-      allRequestsSuccessful = allRequestsSuccessful && loginFinishedBool;
-      requestsFinishedCounter++;
-
-      if(allRequestsSuccessful == false){
-        finalLoginObserver.next(false);
-        finalLoginObserver.complete();
-      }
-      if(requestsFinishedCounter == numberOfSignupRequestsFired && allRequestsSuccessful == true){
-        finalLoginObserver.next(true);
-        finalLoginObserver.complete();
-      }
-    });
-
-    //now all thats left to do is make each auth-provider request call next() on the tmpLoginObserver with the
-    //corresponding boolean result.
-
-    //firebase signup
-    this.fireAuth.createUserWithEmailAndPassword(email, password)
-      .then((newUser) => {
-        this.userProfile.child(newUser.uid).set({
-          email: email,
-          training_count: 0
+        //sign-in and add all relevant data to the firebase user object
+        this.loginUser(email, password).subscribe((user) => {
+          this.userProfile.child(newUser.uid).set({
+            email: email,
+            training_count: 0,
+            experiment_group_id: details.name,
+            ionic_uuid: this.ionicUser.id
+          });
+          returnObserver.next();
+          returnObserver.complete();
         });
-      }).then(() => tmpLoginObserver.next(true));
-
-    //ionic signup --> add the group assignment here to "name" property.
-    let details: UserDetails = {'email': email, 'password': password};
-    this.auth.signup(details).then(() => {
-      // `this.user` is now registered
-      tmpLoginObserver.next(true);
-    }, (err: IDetailedError<string[]>) => {
-      for (let e of err.details) {
-        if (e === 'conflict_email') {
-          console.log('Ionic Signup:  Email already exists.');
-        } else {
-          // handle other errors
-          console.log('Ionic Signup: some error occured');
-          console.log(e);
-        }
-        tmpLoginObserver.next(false)
-      }
+      }, (error) => {
+        returnObserver.error(error);
+        returnObserver.complete();
+      });
+    }, (error) => {
+      returnObserver.error(error);
+      returnObserver.complete();
     });
 
-    return finalLoginStream;
-
+    return returnStream;
   }
 
   //TODO: does not reset password yet for ionic. needs to be implemented!
@@ -202,13 +211,52 @@ export class UserProvider {
       .then((newUser) => {
         this.userProfile.child(newUser.uid).set({
           email: email,
-          training_count: 0
+          training_count: 0,
+          experiment_group_id: "Experiment_id_placeholder"
         });
       });
   }
 
-  __onlyIonicSignup(email: string, password: string): any{
-    let details: UserDetails = {'email': email, 'password': password};
-    return this.auth.signup(details);
+  __onlyIonicSignup(email: string, password: string, experiment_group_id: string): any{
+    let details: UserDetails = {'email': email, 'password': password, 'name': experiment_group_id};
+    return Rx.Observable.fromPromise(this.auth.signup(details));
+  }
+
+  __onlyIonicLogin(email, password){
+    return Rx.Observable.create((observer) => {
+      let details = {'email': email, 'password': password};
+      this.auth.login('basic', details).then(() => {
+        observer.next();
+        observer.complete();
+      }, (error) => {
+        observer.error(error);
+        observer.complete();
+      });
+
+    });
+  }
+
+  __deleteIonicAccount(ionic_uuid: string){
+    return Rx.Observable.create((observer) => {
+      var headers = new Headers({
+        'Authorization': 'Bearer ' + this.IONIC_API_KEY
+      });
+      headers.append('Content-Type','application/json');
+
+      var options = new RequestOptions({
+        method: RequestMethod.Delete,
+        url: 'https://api.ionic.io/users/'+ionic_uuid,
+        headers: headers
+      });
+      var req = new Request(options);
+
+      this.http.request(req).subscribe((response) => {
+        observer.next();
+        observer.complete();
+      }, (error) => {
+        observer.error(error);
+        observer.complete();
+      });
+    })
   }
 }
