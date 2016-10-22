@@ -18,6 +18,7 @@ export class UserProvider {
 
   public fireAuth: any;
   public userProfile: any;
+  public logRef: any;
 
   user: any = null;
 
@@ -169,7 +170,20 @@ export class UserProvider {
             training_count: 0,
             experiment_group_id: details.name,
             ionic_uuid: this.ionicUser.id
+           });
+
+          // set all counters, which are required for logging data 
+          this.logRef = firebase.database().ref('dataLog/' + newUser.uid); 
+          this.logRef.set({
+            profilePage_count: 0,
+            knowledgePage_count: 0,
+            training_count: 0,
+            appOpening_count: 0
           });
+
+         
+
+          // Add data logo elements
           returnObserver.next();
           returnObserver.complete();
         });

@@ -3,6 +3,7 @@ import { NavController, ViewController } from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 import {UserProvider} from "../../providers/user-provider";
 import {Exercise} from "../../model/exercise";
+import {LogProvider} from "../../providers/log-provider";
 
 
 /*
@@ -42,9 +43,34 @@ export class TrainingExercisePage {
   constructor(public navCtrl: NavController,
     public userProvider: UserProvider,
     public trainingProvider: TrainingProvider,
-    public viewCtrl: ViewController) {
+    public viewCtrl: ViewController,
+    public logProvider: LogProvider) {
 
-    this.userProvider.getCurrentUser().subscribe((user) => {
+
+    this.logProvider.getCount("training_count").subscribe((data) => {
+      this.trainingProvider.getNewTraining(data).then((trainingSet) => {
+        this.buttonText = "Start Exercise";
+        this.counter = 0
+        this.trainingData = trainingSet;
+        this.cardState = 'in';
+        this.actualExercise = this.trainingData[this.counter];
+        // -----------  
+        //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
+        // -----------  
+        this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
+
+
+
+        //Save Training Start
+        this.logProvider.logCounter("training_count");
+        this.logProvider.logTraining("start");
+
+
+      })
+    });
+
+
+    /*this.userProvider.getCurrentUser().subscribe((user) => {
       this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
         this.buttonText = "Start Exercise";
         this.counter = 0
@@ -55,21 +81,15 @@ export class TrainingExercisePage {
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
         // -----------  
         this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
-       
 
 
-       //Save Training Start
-        this.userProvider.getCurrentUser().subscribe((user) => {
-          this.logRef = firebase.database().ref('dataLog/' + user.uid);
-          var tempName = "training_" + user.training_count + "_start";
-          var setObject = {};
-          setObject[tempName] = new Date().getTime() ;
-          this.logRef.update(setObject)
-        })
+
+        //Save Training Start
+        this.logProvider.logTraining("start");
 
 
       })
-    });
+    }); */
   }
 
   flyIn() {
@@ -89,26 +109,11 @@ export class TrainingExercisePage {
         this.buttonText = "Start Exercise"
         this.initTimer();
       } else {
-        // --------------------------
-        // Set record for finished training
-        //---------------------------
-        this.userProvider.getCurrentUser().subscribe((user) => {
-          debugger;
 
 
-          this.logRef = firebase.database().ref('dataLog/' + user.uid);
-          var tempName = "training_" + user.training_count + "_end";
-          var setObject = {};
-          setObject[tempName] = new Date().getTime() ;
-          this.logRef.update(setObject);
+        // Set timestamp for finished training
+        this.logProvider.logTraining("end");
 
-
-          this.userRef = firebase.database().ref('userProfile/' + user.uid);
-          this.userRef.update({
-            training_count: user.training_count + 1,
-
-          });
-        })
 
         this.viewCtrl.dismiss();
       }

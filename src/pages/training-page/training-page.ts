@@ -4,6 +4,7 @@ import {Questionnaire} from '../questionnaire/questionnaire'
 import {TrainingExercisePage} from "../training-exercise-page/training-exercise-page";
 import {TrainingProvider} from "../../providers/training-provider";
 import {UserProvider} from "../../providers/user-provider";
+import {LogProvider} from "../../providers/log-provider";
 import {Exercise} from "../../model/exercise";
 
 /*
@@ -22,30 +23,38 @@ export class TrainingPage {
   trainingData: Exercise[];
 
   constructor(public navCtrl: NavController,
-              public modalCtrl: ModalController,
-              public userProvider: UserProvider,
-              public trainingProvider: TrainingProvider) {
+    public modalCtrl: ModalController,
+    public userProvider: UserProvider,
+    public trainingProvider: TrainingProvider,
+    public logProvider: LogProvider) {
 
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
+    this.logProvider.getCount("training_count").subscribe((data) => {
+      this.trainingProvider.getNewTraining(data).then((trainingSet) => {
         this.trainingData = trainingSet;
         console.log(this.trainingData);
-      })
+      });
     });
 
+     /* this.userProvider.getCurrentUser().subscribe((user) => {
+         this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
+           this.trainingData = trainingSet;
+           console.log(this.trainingData);
+         })
+       }); */
+       
   }
 
   ionViewDidLoad() {
     console.log('Hello TrainingPage Page');
   }
 
-  showModal(category){
+  showModal(category) {
 
     this.modal = this.modalCtrl.create(Questionnaire, category);
     this.modal.present();
   }
 
-  openTrainingModal(){
+  openTrainingModal() {
     this.modal = this.modalCtrl.create(TrainingExercisePage)
     this.modal.present();
   }

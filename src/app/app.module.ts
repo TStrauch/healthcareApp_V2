@@ -14,6 +14,7 @@ import { UserProvider } from '../providers/user-provider';
 import {TrainingProvider} from "../providers/training-provider";
 import  {QuestionProvider} from "../providers/question-provider";
 import {RootPageProvider} from "../providers/rootpage";
+import  {LogProvider} from "../providers/log-provider";
 
 // Import the AF2 Module
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
@@ -109,7 +110,8 @@ const myFirebaseAuthConfig = {
     UserProvider,
     RootPageProvider,
     TrainingProvider,
-    QuestionProvider
+    QuestionProvider,
+    LogProvider
   ]
 })
 export class AppModule {}

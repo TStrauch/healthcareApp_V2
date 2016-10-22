@@ -11,11 +11,13 @@ import {firebaseconfig} from "./app.module";
 import {TabsPage} from "../pages/tabs-page/tabs-page";
 import {RootPageProvider} from "../providers/rootpage";
 
+
 import { NativeStorage } from 'ionic-native';
 import {Push, PushToken} from '@ionic/cloud-angular';
 import {AppealPage} from "../pages/appeal-page/appeal-page";
 import {Signup} from "../pages/signup/signup";
 import {UserProvider} from "../providers/user-provider";
+import {LogProvider} from "../providers/log-provider";
 
 import * as Rx from 'rxjs';
 
@@ -28,6 +30,9 @@ export class MyApp {
   modal;
 
   ngAfterViewInit() {
+
+    this.logProvider.logCounter("appOpening_count");
+
     // Let's navigate from TabsPage to Page1
     // firebase.auth().onAuthStateChanged((user) => {
     //   if (user) {
@@ -63,7 +68,8 @@ export class MyApp {
               public af: AngularFire,
               public rootPageProvider: RootPageProvider,
               public modalCtrl: ModalController,
-              public userProvider: UserProvider) {
+              public userProvider: UserProvider,
+              public logProvider: LogProvider) {
 
     firebase.initializeApp(firebaseconfig);
 
