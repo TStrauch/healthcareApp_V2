@@ -1,4 +1,4 @@
-import { Component,trigger, state, style, transition, animate, keyframes } from '@angular/core';
+import { Component, trigger, state, style, transition, animate, keyframes } from '@angular/core';
 import { NavController, ViewController } from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 import {UserProvider} from "../../providers/user-provider";
@@ -31,6 +31,8 @@ export class TrainingExercisePage {
   counter: any;
   trainingData: Exercise[];
   actualExercise: Exercise;
+  userRef: any;
+  logRef: any;
   timer;
   buttonText;
   clockText;
@@ -47,21 +49,33 @@ export class TrainingExercisePage {
         this.buttonText = "Start Exercise";
         this.counter = 0
         this.trainingData = trainingSet;
-        this.cardState = 'in'; 
+        this.cardState = 'in';
         this.actualExercise = this.trainingData[this.counter];
         // -----------  
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
         // -----------  
         this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
-        debugger;
+       
+
+
+       //Save Training Start
+        this.userProvider.getCurrentUser().subscribe((user) => {
+          this.logRef = firebase.database().ref('dataLog/' + user.uid);
+          var tempName = "training_" + user.training_count + "_start";
+          var setObject = {};
+          setObject[tempName] = new Date().getTime() ;
+          this.logRef.update(setObject)
+        })
+
+
       })
     });
   }
 
- flyIn(){
-    if(this.cardState == 'out'){
-    this.actualExercise = this.trainingData[this.counter];
-    this.cardState = 'in'; 
+  flyIn() {
+    if (this.cardState == 'out') {
+      this.actualExercise = this.trainingData[this.counter];
+      this.cardState = 'in';
     }
   }
 
@@ -78,6 +92,24 @@ export class TrainingExercisePage {
         // --------------------------
         // Set record for finished training
         //---------------------------
+        this.userProvider.getCurrentUser().subscribe((user) => {
+          debugger;
+
+
+          this.logRef = firebase.database().ref('dataLog/' + user.uid);
+          var tempName = "training_" + user.training_count + "_end";
+          var setObject = {};
+          setObject[tempName] = new Date().getTime() ;
+          this.logRef.update(setObject);
+
+
+          this.userRef = firebase.database().ref('userProfile/' + user.uid);
+          this.userRef.update({
+            training_count: user.training_count + 1,
+
+          });
+        })
+
         this.viewCtrl.dismiss();
       }
     }
@@ -134,9 +166,9 @@ export class TrainingExercisePage {
   }
 
   initTimer() {
-      // -----------  
-      //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
-      // -----------  
+    // -----------  
+    //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
+    // -----------  
     this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
   }
 
