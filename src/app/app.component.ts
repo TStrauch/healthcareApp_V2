@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import {Platform, ModalController, NavController} from 'ionic-angular';
-import { StatusBar } from 'ionic-native';
+import { StatusBar,  NativeStorage, BackgroundMode } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
 import {IntroductionPage} from '../pages/initial-start/introduction-page/introduction-page';
@@ -12,7 +12,6 @@ import {TabsPage} from "../pages/tabs-page/tabs-page";
 import {RootPageProvider} from "../providers/rootpage";
 
 
-import { NativeStorage } from 'ionic-native';
 import {Push, PushToken} from '@ionic/cloud-angular';
 import {AppealPage} from "../pages/appeal-page/appeal-page";
 import {Signup} from "../pages/signup/signup";
@@ -32,6 +31,12 @@ export class MyApp {
   ngAfterViewInit() {
 
     this.logProvider.logCounter("appOpening_count");
+    this.logProvider.logTime("appOpening_count", "appOpening");
+
+    //BackgroundMode.enable();
+   
+
+
 
     // Let's navigate from TabsPage to Page1
     // firebase.auth().onAuthStateChanged((user) => {
@@ -53,23 +58,23 @@ export class MyApp {
 
 
     this.userProvider.getCurrentUser().subscribe((user) => {
-        if (user) {
-          this.rootPageProvider.setRootPage(TabsPage, {}, {});
-        } else {
-          this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-        }
+      if (user) {
+        this.rootPageProvider.setRootPage(TabsPage, {}, {});
+      } else {
+        this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
+      }
     });
 
     // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
   }
 
   constructor(platform: Platform,
-              public push: Push,
-              public af: AngularFire,
-              public rootPageProvider: RootPageProvider,
-              public modalCtrl: ModalController,
-              public userProvider: UserProvider,
-              public logProvider: LogProvider) {
+    public push: Push,
+    public af: AngularFire,
+    public rootPageProvider: RootPageProvider,
+    public modalCtrl: ModalController,
+    public userProvider: UserProvider,
+    public logProvider: LogProvider) {
 
     firebase.initializeApp(firebaseconfig);
 
@@ -82,6 +87,7 @@ export class MyApp {
 
       this.nav.setRoot(newRootPage, navParams, navOpt);
     })
+
 
 
     this.push.rx.notification()
@@ -100,6 +106,15 @@ export class MyApp {
         //alert(msg.title + ': ' + msg.text);
       });
 
+    /*
+        BackgroundMode.onactivate(){
+          this.logProvider.logTime("appOpening_count", "appClosing");
+          BackgroundMode.disable();
+        }) */
+
+
+
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -107,4 +122,8 @@ export class MyApp {
 
     });
   }
+
+
+
+
 }

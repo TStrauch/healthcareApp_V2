@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {NavController, Platform, NavParams, ViewController} from 'ionic-angular';
 import {QuestionProvider} from "../../providers/question-provider";
+import {LogProvider} from "../../providers/log-provider";
 
 /*
   Generated class for the Questionnaire page.
@@ -23,9 +24,10 @@ export class Questionnaire {
   form;
 
   constructor(public navCtrl: NavController,
-              public params: NavParams,
-              public viewCtrl: ViewController,
-              public questionProvider: QuestionProvider) {
+    public params: NavParams,
+    public viewCtrl: ViewController,
+    public questionProvider: QuestionProvider,
+    public logProvider: LogProvider) {
 
     this.category = this.params.get('category');
 
@@ -36,6 +38,12 @@ export class Questionnaire {
     });
 
     this.counter = 0;
+
+    // Increase counter and log start time
+    this.logProvider.logCounter("questionnaire_count");
+    this.logProvider.logTime("questionnaire_count", "questionnaire");
+
+
 
     // Set scale for every question
     this.scale = [
@@ -48,6 +56,7 @@ export class Questionnaire {
       { value: '7', display: 'Strongly disagree' }
     ];
 
+
   }
 
 
@@ -57,10 +66,12 @@ export class Questionnaire {
     //Add here the sending to firebase, if structure is clear
     //---------------------------------------------
 
-     console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
+    this.logProvider.logQuestion(this.actualQuestion.id, this.form);
+
+    console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
 
 
-    if (this.counter < (this.length -1)) {
+    if (this.counter < (this.length - 1)) {
       this.counter++;
       this.actualQuestion = this.questions[this.counter];
       this.form = null;

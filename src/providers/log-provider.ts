@@ -19,6 +19,7 @@ export class LogProvider {
 
   logCounter(path) {
     this.userProvider.getCurrentUser().subscribe((user) => {
+      debugger;
       this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
       this.logRef.once('value', (snapshot) => {
 
@@ -46,6 +47,34 @@ export class LogProvider {
       });
     });
   }
+
+  logQuestion(questionId, questionAnswer) {
+    this.userProvider.getCurrentUser().subscribe((user) => {
+
+      this.logRef = firebase.database().ref('dataLog/' + user.uid + "/questionnaire_count");
+      this.logRef.once('value', (snapshot) => {
+        var tempName = "questionnaire_" + snapshot.val() + "_" + questionId;
+        var updateObject = {};
+        updateObject[tempName] = questionAnswer;
+        this.logRef.parent.update(updateObject);
+      });
+    });
+  }
+
+
+  logTime(path, name) {
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      debugger;
+      this.logRef = firebase.database().ref('dataLog/' + user.uid + "/" + path);
+      this.logRef.once('value', (snapshot) => {
+        var tempName = name + "_" + snapshot.val() + "_time";
+        var updateObject = {};
+        updateObject[tempName] = new Date().getTime();
+        this.logRef.parent.update(updateObject);
+      });
+    });
+  }
+
 
   getCount(path): any {
 

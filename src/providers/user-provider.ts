@@ -178,7 +178,8 @@ export class UserProvider {
             profilePage_count: 0,
             knowledgePage_count: 0,
             training_count: 0,
-            appOpening_count: 0
+            appOpening_count: 0,
+            questionnaire_count: 0
           });
 
          
