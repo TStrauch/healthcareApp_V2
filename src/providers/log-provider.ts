@@ -18,21 +18,28 @@ export class LogProvider {
   }
 
   logCounter(path) {
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      debugger;
-      this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
-      this.logRef.once('value', (snapshot) => {
+    return Rx.Observable.create((observer) => {
+      this.userProvider.getCurrentUser().subscribe((user) => {
 
-        var tempName = path;
-        var updateObject = {};
-        updateObject[tempName] = snapshot.val() + 1;
-        this.logRef.parent.update(updateObject);
-      });
+        this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
+        this.logRef.once('value', (snapshot) => {
+
+          var tempName = path;
+          var updateObject = {};
+          updateObject[tempName] = snapshot.val() + 1;
+          this.logRef.parent.update(updateObject).then(() => {
+            observer.next();
+            observer.complete();
+          }, (error) => {
+            observer.error(error);
+            observer.complete();
+          });
+        })
+      })
     })
-
-
-
   }
+
+
 
   logTraining(path) {
     this.userProvider.getCurrentUser().subscribe((user) => {
@@ -64,7 +71,7 @@ export class LogProvider {
 
   logTime(path, name) {
     this.userProvider.getCurrentUser().subscribe((user) => {
-      debugger;
+
       this.logRef = firebase.database().ref('dataLog/' + user.uid + "/" + path);
       this.logRef.once('value', (snapshot) => {
         var tempName = name + "_" + snapshot.val() + "_time";

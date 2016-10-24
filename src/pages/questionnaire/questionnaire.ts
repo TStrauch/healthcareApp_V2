@@ -40,8 +40,11 @@ export class Questionnaire {
     this.counter = 0;
 
     // Increase counter and log start time
-    this.logProvider.logCounter("questionnaire_count");
-    this.logProvider.logTime("questionnaire_count", "questionnaire");
+    this.logProvider.logCounter("questionnaire_count").subscribe(() => {
+        this.logProvider.logTime("questionnaire_count", "questionnaire");
+    });
+      
+   
 
 
 
