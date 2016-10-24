@@ -75,7 +75,7 @@ export class ProfilePage {
   }
 
   ionViewDidEnter() {
-   this.logProvider.logCounter("profilePage_count");
+   this.logProvider.logCounter("profilePage_count").subscribe();
   }
 
   logOut() {

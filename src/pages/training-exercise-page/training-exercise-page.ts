@@ -54,42 +54,18 @@ export class TrainingExercisePage {
         this.trainingData = trainingSet;
         this.cardState = 'in';
         this.actualExercise = this.trainingData[this.counter];
+
         // -----------  
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
         // -----------  
         this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
 
-
-
-        //Save Training Start
-        this.logProvider.logCounter("training_count");
-        this.logProvider.logTraining("start");
-
-
+        //Count training and set timestamp
+        this.logProvider.logCounter("training_count").subscribe(() => {
+          this.logProvider.logTraining("start");
+        });
       })
     });
-
-
-    /*this.userProvider.getCurrentUser().subscribe((user) => {
-      this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
-        this.buttonText = "Start Exercise";
-        this.counter = 0
-        this.trainingData = trainingSet;
-        this.cardState = 'in';
-        this.actualExercise = this.trainingData[this.counter];
-        // -----------  
-        //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
-        // -----------  
-        this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
-
-
-
-        //Save Training Start
-        this.logProvider.logTraining("start");
-
-
-      })
-    }); */
   }
 
   flyIn() {

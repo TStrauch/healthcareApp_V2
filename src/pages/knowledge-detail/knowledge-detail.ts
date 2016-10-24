@@ -33,7 +33,7 @@ export class KnowledgeDetailPage {
   }
 
   ionViewDidEnter() {
-   this.logProvider.logCounter("knowledgePage_count");
+   this.logProvider.logCounter("knowledgePage_count").subscribe();
   }
 
   // dismiss() {

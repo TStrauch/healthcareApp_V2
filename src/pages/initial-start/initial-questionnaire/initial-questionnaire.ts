@@ -4,6 +4,7 @@ import {RootPageProvider} from "../../../providers/rootpage";
 import {TabsPage} from "../../tabs-page/tabs-page";
 import {Validators, FormBuilder } from '@angular/forms';
 import {UserProvider} from "../../../providers/user-provider";
+import {LogProvider} from "../../../providers/log-provider";
 import 'rxjs/add/operator/map';
 import * as Rx from 'rxjs';
 
@@ -28,7 +29,8 @@ export class InitialQuestionnaire {
   constructor(public navCtrl: NavController,
     public rootPageProvider: RootPageProvider,
     public formBuilder: FormBuilder,
-    public userProvider: UserProvider
+    public userProvider: UserProvider,
+    public logProvider: LogProvider
   ) {
 
     this.fireAuth = firebase.auth();
@@ -63,13 +65,18 @@ export class InitialQuestionnaire {
         this.userProvider.getCurrentUser().subscribe((user) => {
           debugger;
           this.userRef = firebase.database().ref('dataLog/' + user.uid); 
-          this.userRef.set({
+          this.userRef.update({
             age: this.questionnaire.value.age,
             gender: this.questionnaire.value.gender,
             major: this.questionnaire.value.major
           });
         })
     
+    // Set First start here
+    this.logProvider.logCounter("appOpening_count").subscribe(() =>{
+        this.logProvider.logTime("appOpening_count", "appOpening");
+    });
+
 
     this.rootPageProvider.setRootPage(TabsPage, {}, { "animate": true, "direction": "exit" });
   }

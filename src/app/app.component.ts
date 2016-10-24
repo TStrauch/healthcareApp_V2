@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import {Platform, ModalController, NavController} from 'ionic-angular';
-import { StatusBar,  NativeStorage, BackgroundMode } from 'ionic-native';
+import { StatusBar, NativeStorage, BackgroundMode } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
 import {IntroductionPage} from '../pages/initial-start/introduction-page/introduction-page';
@@ -30,11 +30,7 @@ export class MyApp {
 
   ngAfterViewInit() {
 
-    this.logProvider.logCounter("appOpening_count");
-    this.logProvider.logTime("appOpening_count", "appOpening");
 
-    //BackgroundMode.enable();
-   
 
 
 
@@ -54,18 +50,25 @@ export class MyApp {
     //   }
     // });
 
-    //this.rootPageProvider.setRootPage(InitialQuestionnaire, {}, {});
 
 
-    this.userProvider.getCurrentUser().subscribe((user) => {
+
+    //this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+    // this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
+
+
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.rootPageProvider.setRootPage(TabsPage, {}, {});
+        this.logProvider.logCounter("appOpening_count").subscribe(() => {
+          this.logProvider.logTime("appOpening_count", "appOpening");
+          this.rootPageProvider.setRootPage(TabsPage, {}, {});
+        });
       } else {
-        this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
+        this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+
       }
     });
 
-    // this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
   }
 
   constructor(platform: Platform,
@@ -106,14 +109,10 @@ export class MyApp {
         //alert(msg.title + ': ' + msg.text);
       });
 
-    /*
-        BackgroundMode.onactivate(){
-          this.logProvider.logTime("appOpening_count", "appClosing");
-          BackgroundMode.disable();
-        }) */
 
-
-
+    platform.pause.subscribe(() => {
+      this.logProvider.logTime("appOpening_count", "appPausing");
+    });
 
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
