@@ -46,7 +46,6 @@ export class LogProvider {
 
       this.logRef = firebase.database().ref('dataLog/' + user.uid + "/training_count");
       this.logRef.once('value', (snapshot) => {
-        debugger;
         var tempName = "training_" + snapshot.val() + "_" + path;
         var updateObject = {};
         updateObject[tempName] = new Date().getTime();

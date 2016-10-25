@@ -57,6 +57,8 @@ export class TrainingPage {
   openTrainingModal() {
     this.modal = this.modalCtrl.create(TrainingExercisePage)
     this.modal.present();
+
+ 
   }
 
 }

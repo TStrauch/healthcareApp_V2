@@ -1,9 +1,10 @@
 import { Component, trigger, state, style, transition, animate, keyframes } from '@angular/core';
-import { NavController, ViewController } from 'ionic-angular';
+import { NavController, ViewController, ModalController  } from 'ionic-angular';
 import {TrainingProvider} from "../../providers/training-provider";
 import {UserProvider} from "../../providers/user-provider";
 import {Exercise} from "../../model/exercise";
 import {LogProvider} from "../../providers/log-provider";
+import {Questionnaire} from '../questionnaire/questionnaire'
 
 
 /*
@@ -34,6 +35,7 @@ export class TrainingExercisePage {
   actualExercise: Exercise;
   userRef: any;
   logRef: any;
+  modal: any;
   timer;
   buttonText;
   clockText;
@@ -44,7 +46,8 @@ export class TrainingExercisePage {
     public userProvider: UserProvider,
     public trainingProvider: TrainingProvider,
     public viewCtrl: ViewController,
-    public logProvider: LogProvider) {
+    public logProvider: LogProvider,
+    public modalCtrl: ModalController) {
 
 
     this.logProvider.getCount("training_count").subscribe((data) => {
@@ -91,7 +94,13 @@ export class TrainingExercisePage {
         this.logProvider.logTraining("end");
 
 
-        this.viewCtrl.dismiss();
+        // Set here syntax for triggering questionnaire
+          this.modal = this.modalCtrl.create(Questionnaire, { category: 2 });
+          this.modal.present().then(() => {
+            this.viewCtrl.dismiss();
+          });
+      
+
       }
     }
     // Start the counter
