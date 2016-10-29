@@ -27,14 +27,17 @@
       </h2>
     </ion-row>
     <ion-row>
-      <ion-col offset-10 width-80>
+      <div>Your current stress level is {{stress_score}}</div>
+    </ion-row>
+    <ion-row>
+      <!--<ion-col offset-10 width-80>-->
         <!-- some chart experimentation -->
 
         <canvas baseChart width="100%" height="100%" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
           [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
         <!--(chartHover)="chartHovered($event)"-->
         <!--(chartClick)="chartClicked($event)"-->
-      </ion-col>
+      <!--</ion-col>-->
     </ion-row>
     </ion-grid>
 

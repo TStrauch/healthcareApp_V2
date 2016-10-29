@@ -5,6 +5,8 @@ import {UserProvider} from "../../providers/user-provider";
 import {RootPageProvider} from "../../providers/rootpage";
 import {LogProvider} from "../../providers/log-provider";
 import * as c3 from 'c3';
+import {QuestionProvider} from "../../providers/question-provider";
+import moment from 'moment';
 
 /*
   Generated class for the ProfilePage page.
@@ -18,13 +20,17 @@ import * as c3 from 'c3';
 })
 export class ProfilePage {
   user: any;
+  stress_score: number;
   // chart;
 
   // chart related stuff. would need to be put in a separate component
   public lineChartData: Array<any> = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Your Performance' }
+    {
+      data: [65, 59, 80, 81, 56, 55, 40],
+      label: 'Your Performance'
+    }
   ];
-  public lineChartLabels: Array<any> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  public lineChartLabels: Array<any> = [];
   public lineChartOptions: any = {
     animation: false,
     responsive: true
@@ -44,9 +50,54 @@ export class ProfilePage {
 
 
   constructor(public nav: NavController,
-    public userProvider: UserProvider,
-    public rootPageProvider: RootPageProvider,
-    public logProvider: LogProvider) { }
+              public userProvider: UserProvider,
+              public rootPageProvider: RootPageProvider,
+              public questionProvider: QuestionProvider,
+              public logProvider: LogProvider) {
+
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      this.questionProvider.getThisWeeksPSL().subscribe((scores) => {
+        var sum = 0;
+        Object.keys(scores).forEach((key) => {
+          sum += scores[key].score;
+        });
+        sum = sum / Object.keys(scores).length;
+        this.stress_score = Math.round(sum * 100) / 100;
+      });
+
+      this.logProvider.getTrainingChartDataWeek().subscribe((data) => {
+
+        //prepare chartData and set the labels
+        let newLabels: Array<any> = [];
+        var chartData = [];
+        for (var i=6; i>=0; i--){
+          // var day = moment().subtract(i, 'days').dayOfYear();
+          // chartData[i] = 0;
+          chartData.push(0);
+          newLabels.push(moment().subtract(i, 'days').format('ddd'));
+        }
+
+        //set the data
+        let startDay = moment().subtract(6,'days').dayOfYear();
+        Object.keys(data).forEach((key) => {
+          let day = data[key].day;
+          chartData[(day-startDay)] += 1;
+        });
+        let newChartData = [{
+          data: chartData,
+          label: "Your trainings last week"
+        }];
+
+        this.lineChartData = newChartData;
+
+        setTimeout(() => {
+          this.lineChartLabels = newLabels;
+        }, 0);
+
+
+      })
+    });
+  }
 
   ionViewDidLoad() {
     console.log('Hello ProfilePage Page');

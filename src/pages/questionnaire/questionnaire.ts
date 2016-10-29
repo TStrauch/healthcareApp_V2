@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {NavController, Platform, NavParams, ViewController} from 'ionic-angular';
 import {QuestionProvider} from "../../providers/question-provider";
 import {LogProvider} from "../../providers/log-provider";
+import * as moment from 'moment';
 
 /*
   Generated class for the Questionnaire page.
@@ -22,6 +23,7 @@ export class Questionnaire {
   length;
   counter;
   form;
+  answers: any;
 
   constructor(public navCtrl: NavController,
     public params: NavParams,
@@ -43,20 +45,27 @@ export class Questionnaire {
     this.logProvider.logCounter("questionnaire_count").subscribe(() => {
         this.logProvider.logTime("questionnaire_count", "questionnaire");
     });
-      
-   
+
+   this.answers = [];
 
 
 
     // Set scale for every question
+    // this.scale = [
+    //   { value: '1', display: 'Strongly Agree' },
+    //   { value: '2', display: 'Agree' },
+    //   { value: '3', display: 'Agree somewhat' },
+    //   { value: '4', display: 'Undecided' },
+    //   { value: '5', display: 'Disagree somewhat' },
+    //   { value: '6', display: 'Disagree' },
+    //   { value: '7', display: 'Strongly disagree' }
+    // ];
     this.scale = [
-      { value: '1', display: 'Strongly Agree' },
-      { value: '2', display: 'Agree' },
-      { value: '3', display: 'Agree somewhat' },
-      { value: '4', display: 'Undecided' },
-      { value: '5', display: 'Disagree somewhat' },
-      { value: '6', display: 'Disagree' },
-      { value: '7', display: 'Strongly disagree' }
+      { value: '0', display: 'Never' },
+      { value: '1', display: 'Almost Never' },
+      { value: '2', display: 'Sometimes' },
+      { value: '3', display: 'Fairly Often' },
+      { value: '4', display: 'Very Often' }
     ];
 
 
@@ -73,14 +82,16 @@ export class Questionnaire {
 
     console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
 
+    this.answers.push(this.form);
 
     if (this.counter < (this.length - 1)) {
       this.counter++;
       this.actualQuestion = this.questions[this.counter];
       this.form = null;
-
     }
     else {
+      //give answers to provider. provider then calculated PSS score and saves it to the db
+      this.questionProvider.savePSS(this.answers);
       this.viewCtrl.dismiss();
     }
 

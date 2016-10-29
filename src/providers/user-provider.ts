@@ -96,7 +96,6 @@ export class UserProvider {
         //we will decide what type of error it is depending on the "error" object given into the callback
         //apparently ionic does not give some technical id for the type of error. only the message tells us the error
         //the problem with that is that they might change the message and the following logic will break then...
-
         let msg = error.response.body.error.message;
         if (msg == this.IONIC_INVALID_PASSWORD) {
           // this seems to be error type 2.
@@ -174,7 +173,7 @@ export class UserProvider {
             ionic_uuid: this.ionicUser.id
           });
 
-          // set all counters, which are required for logging data 
+          // set all counters, which are required for logging data
           this.logRef = firebase.database().ref('dataLog/' + newUser.uid);
           this.logRef.set({
             profilePage_count: 0,

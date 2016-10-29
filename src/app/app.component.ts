@@ -30,45 +30,6 @@ export class MyApp {
 
   ngAfterViewInit() {
 
-
-
-
-
-    // Let's navigate from TabsPage to Page1
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user) {
-    //     // this.rootPage = HomePage;
-    //     this.nav.push(TabsPage);
-    //   } else {
-    //     // NativeStorage.getItem('introduction')
-    //     //   .then(
-    //     //   this.rootPage = IntroductionPage
-    //     //   );
-    //
-    //     //this should depend on whether its the initial start of the app or not.
-    //     this.nav.push(IntroductionPage);
-    //   }
-    // });
-
-
-
-
-    //this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-    // this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
-
-
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.logProvider.logCounter("appOpening_count").subscribe(() => {
-          this.logProvider.logTime("appOpening_count", "appOpening");
-          this.rootPageProvider.setRootPage(TabsPage, {}, {});
-        });
-      } else {
-        this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-
-      }
-    });
-
   }
 
   constructor(platform: Platform,
@@ -91,6 +52,23 @@ export class MyApp {
       this.nav.setRoot(newRootPage, navParams, navOpt);
     })
 
+    //show initial root page
+    var initialOpening = false; //will be set via local storage
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user && !initialOpening) {
+        // this.logProvider.logCounter("appOpening_count").subscribe(() => {
+        //   this.logProvider.logTime("appOpening_count", "appOpening");
+        //   console.log("appOpening count increased");
+          this.rootPageProvider.setRootPage(TabsPage, {}, {});
+        // });
+      } else if(initialOpening) {
+          this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+      } else{
+          this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
+      }
+    });
+
 
 
     this.push.rx.notification()
@@ -112,6 +90,12 @@ export class MyApp {
 
     platform.pause.subscribe(() => {
       this.logProvider.logTime("appOpening_count", "appPausing");
+    });
+
+    platform.resume.subscribe(() => {
+      this.logProvider.logCounter("appOpening_count").subscribe(() => {
+        this.logProvider.logTime("appOpening_count", "appOpening");
+      });
     });
 
     platform.ready().then(() => {

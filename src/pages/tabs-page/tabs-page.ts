@@ -5,6 +5,8 @@ import {ProfilePage} from "../profile-page/profile-page";
 import {KnowledgePage} from "../knowledge-page/knowledge-page";
 import {RootPage} from "../../interfaces/RootPage";
 import { Push, PushToken } from '@ionic/cloud-angular';
+import {QuestionProvider} from "../../providers/question-provider";
+import {UserProvider} from "../../providers/user-provider";
 
 /*
   Generated class for the TabsPage page.
@@ -21,7 +23,9 @@ export class TabsPage implements RootPage{
   public tab3Root: any;
 
   constructor(public navCtrl: NavController,
-              public push: Push) {
+              public push: Push,
+              public questionProvider: QuestionProvider,
+              public userProvider: UserProvider) {
     this.tab1Root = TrainingPage;
     this.tab2Root = ProfilePage;
     this.tab3Root = KnowledgePage;
@@ -32,6 +36,13 @@ export class TabsPage implements RootPage{
     }).then((t: PushToken) => {
       console.log('Token saved:', t.token);
     });
+
+
+    //testing calls
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      this.questionProvider.getThisWeeksPSL();
+    })
+
   }
 
   ionViewDidLoad() {
