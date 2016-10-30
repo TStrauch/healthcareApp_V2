@@ -13,17 +13,16 @@ import {EXERCISES, TRAINING_DAT} from "./mock/training-data";
 export class TrainingProvider {
 
   getAllExercises(): any{
-    return Promise.resolve(EXERCISES)
+    return Promise.resolve(TRAINING_DAT)
   }
 
-  getSingleExercise(id: number): any {
+  getSingleExercise(category: number,id: number): any {
      return Promise.resolve(EXERCISES).then(
         exerciseList => exerciseList.filter(singleExercise => singleExercise.id === id)[0]
    );
   }
 
   getNewTraining(index: number): any{
-
     let max = TRAINING_DAT.count_per_category;
 
     let e1 = TRAINING_DAT.category_one[index % max];

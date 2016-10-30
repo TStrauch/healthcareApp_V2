@@ -10,6 +10,7 @@ import {LogProvider} from "../../providers/log-provider";
   Ionic pages and navigation.
 */
 @Component({
+  selector: 'knowledge-detail',
   templateUrl: 'knowledge-detail.html',
 })
 export class KnowledgeDetailPage {

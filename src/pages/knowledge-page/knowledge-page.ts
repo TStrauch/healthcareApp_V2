@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController} from 'ionic-angular';
-import {TrainingProvider} from "../../providers/training-provider";
-import {Exercise} from "../../model/exercise";
-import {KnowledgeDetailPage} from "../knowledge-detail/knowledge-detail";
+import { NavController, ModalController } from 'ionic-angular';
+import { TrainingProvider } from "../../providers/training-provider";
+import { Exercise } from "../../model/exercise";
+import { KnowledgeDetailPage } from "../knowledge-detail/knowledge-detail";
 
 /*
   Generated class for the KnowledgePage page.
@@ -15,15 +15,21 @@ import {KnowledgeDetailPage} from "../knowledge-detail/knowledge-detail";
   templateUrl: 'knowledge-page.html'
 })
 export class KnowledgePage {
-  exercises: Exercise[];
+  exercisesNeck: Exercise[];
+  exercisesShoulder: Exercise[];
+  exercisesEye: Exercise[];
+  detailExercise: Exercise;
   modalKnowledgeDetail: any;
 
   constructor(public navCtrl: NavController,
-              public trainingProvider: TrainingProvider,
-              public modalCtrl: ModalController
+    public trainingProvider: TrainingProvider,
+    public modalCtrl: ModalController
   ) {
+
     this.trainingProvider.getAllExercises().then(data => {
-      this.exercises = data;
+      this.exercisesNeck = data.category_one;
+      this.exercisesShoulder = data.category_two;
+      this.exercisesEye = data.category_three;
     });
   }
 
@@ -36,14 +42,22 @@ export class KnowledgePage {
   }
 
 
-// exerciseSelected(id){
-//     this.modalKnowledgeDetail = this.modalCtrl.create(KnowledgeDetailPage, {"id": id});
-//     this.modalKnowledgeDetail.present();
-//   }
+  // exerciseSelected(id){
+  //     this.modalKnowledgeDetail = this.modalCtrl.create(KnowledgeDetailPage, {"id": id});
+  //     this.modalKnowledgeDetail.present();
+  //   }
 
- exerciseSelected(index) {
+  exerciseSelected(category, index) {
+
+    if (category === 1) {
+      this.detailExercise = this.exercisesNeck[index];
+    } else if (category == 2) {
+      this.detailExercise = this.exercisesShoulder[index];
+    } else {
+      this.detailExercise = this.exercisesEye[index];
+    }
     this.navCtrl.push(KnowledgeDetailPage, {
-      exercise: this.exercises[index],
+      exercise: this.detailExercise,
     });
   }
 
