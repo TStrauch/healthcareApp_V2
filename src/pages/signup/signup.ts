@@ -48,8 +48,11 @@ export class Signup {
 
     //set default values for nav Params if necessary
     if(!this.loginDoneNavOptions){
-      this.loginDoneNavOptions.page = TabsPage;
-      this.loginDoneNavOptions.navParams = {};
+      this.loginDoneNavOptions = {};
+      this.loginDoneNavOptions.pageSignup = TabsPage;
+      this.loginDoneNavOptions.pageLogin = TabsPage;
+      this.loginDoneNavOptions.navParamsSignup = {};
+      this.loginDoneNavOptions.navParamsLogin = {};
       this.loginDoneNavOptions.navOpt = {};
     }
 
@@ -76,7 +79,7 @@ export class Signup {
       console.log(this.signupForm.value);
     } else {
       this.userProvider.signupUser(this.signupForm.value.email, this.signupForm.value.password).subscribe(() => {
-        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
+        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.pageSignup, this.loginDoneNavOptions.navParamsSignup, this.loginDoneNavOptions.navOpt);
       }, (error) => {
         this.loading.dismiss();
         let alert = this.alertCtrl.create({

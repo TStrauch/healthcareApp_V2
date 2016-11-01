@@ -27,6 +27,7 @@ export class MyApp {
   @ViewChild('mainNav') nav: NavController
   rootPage;
   modal;
+  initialOpening = true;
 
   ngAfterViewInit() {
 
@@ -40,37 +41,72 @@ export class MyApp {
     public userProvider: UserProvider,
     public logProvider: LogProvider) {
 
+    /**
+     * firebase setup
+     */
     firebase.initializeApp(firebaseconfig);
 
 
-    //show login page if user is not logged in. otherwise show home page.
+    /**
+     * handle any rootpage changes centrally here
+     */
     rootPageProvider.getRootPageStream().subscribe((navData) => {
       let newRootPage = navData.rootPage;
       let navParams = navData.navParams;
       let navOpt = navData.navOpt;
 
-      this.nav.setRoot(newRootPage, navParams, navOpt);
+      //gets executed when user comes form introduction screen via login. then the initial questionnaire is not executed.
+      if(navParams.initialOpening){
+        NativeStorage.setItem('initialOpening', {value: false}).then(data => {
+          console.log("initial opening set: "+data);
+          this.initialOpening = false;
+          this.nav.setRoot(newRootPage, navParams, navOpt);
+        }, error => {
+          console.error(error);
+          this.nav.setRoot(newRootPage, navParams, navOpt);
+        });
+      }
+      else{
+        this.nav.setRoot(newRootPage, navParams, navOpt);
+      }
     })
 
-    //show initial root page
-    var initialOpening = false; //will be set via local storage
-
+    /**
+     * call local storage to set initialOpening to true / false
+     * @type {boolean}
+     */
+    /**
+     * set the initial rootpage on app start depending on the state.
+     * states are: initial opening, logged in, not-logged in
+     */
+    if(!platform.is('cordova')){
+      this.initialOpening = false;
+    }
     firebase.auth().onAuthStateChanged((user) => {
-      if (user && !initialOpening) {
-        // this.logProvider.logCounter("appOpening_count").subscribe(() => {
-        //   this.logProvider.logTime("appOpening_count", "appOpening");
-        //   console.log("appOpening count increased");
+      NativeStorage.getItem('initialOpening').then(data => {
+        console.log("initial opening retrieved: "+data);
+        this.initialOpening = data.value;
+      }, error => {
+        console.log("initial opening could not be retrieved!!")
+        console.error(error);
+      }).then(() => {
+        if (user && !this.initialOpening) {
           this.rootPageProvider.setRootPage(TabsPage, {}, {});
-        // });
-      } else if(initialOpening) {
+        } else if(this.initialOpening) {
           this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-      } else{
+        } else{
           this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-      }
+        }
+      });
+
     });
 
 
 
+    /**
+     * logic what to do when a new push notification is received.
+     * --> open a new modal and display the text and picture
+     */
     this.push.rx.notification()
       .subscribe((msg) => {
         //{"raw":{"message":"Get 150% off!","title":"Test Push","additionalData":
@@ -80,7 +116,7 @@ export class MyApp {
         //access the payload:
         //msg.payload.key
         let payload: any = msg.payload;
-        this.modal = this.modalCtrl.create(AppealPage, { url: payload.url });
+        this.modal = this.modalCtrl.create(AppealPage, { text: msg.text, title: msg.title, url: payload.url });
         this.modal.present();
 
         console.log("received push");
@@ -88,21 +124,33 @@ export class MyApp {
       });
 
 
+    /**
+     * cordova platform events triggered on pause and resume
+     */
     platform.pause.subscribe(() => {
       this.logProvider.logTime("appOpening_count", "appPausing");
+      console.log("platform pause triggered");
     });
-
     platform.resume.subscribe(() => {
       this.logProvider.logCounter("appOpening_count").subscribe(() => {
         this.logProvider.logTime("appOpening_count", "appOpening");
       });
+      console.log("platform resume triggered");
     });
 
+    /**
+     * is only triggered on appCreate.
+     * will not be triggered if the app returns from a background state.
+     */
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
 
+      //gets only executed when "resume" is not fired.
+      this.logProvider.logCounter("appOpening_count").subscribe(() => {
+        this.logProvider.logTime("appOpening_count", "appOpening");
+      });
     });
   }
 

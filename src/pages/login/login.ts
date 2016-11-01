@@ -52,8 +52,10 @@ export class LoginPage implements RootPage{
     //set default values for nav Params if necessary
     if(!this.loginDoneNavOptions){
       this.loginDoneNavOptions = {};
-      this.loginDoneNavOptions.page = TabsPage;
-      this.loginDoneNavOptions.navParams = {};
+      this.loginDoneNavOptions.pageSignup = TabsPage;
+      this.loginDoneNavOptions.pageLogin = TabsPage;
+      this.loginDoneNavOptions.navParamsSignup = {};
+      this.loginDoneNavOptions.navParamsLogin = {};
       this.loginDoneNavOptions.navOpt = {};
     }
 
@@ -86,9 +88,7 @@ export class LoginPage implements RootPage{
       console.log(this.loginForm.value);
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password).subscribe( (authData) => {
-        // this.nav.setRoot(HomePage);
-        // this.nav.setRoot(TabsPage);
-        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.page, this.loginDoneNavOptions.navParams, this.loginDoneNavOptions.navOpt);
+        this.rootPageProvider.setRootPage(this.loginDoneNavOptions.pageLogin, this.loginDoneNavOptions.navParamsLogin, this.loginDoneNavOptions.navOpt);
       }, (error) => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({

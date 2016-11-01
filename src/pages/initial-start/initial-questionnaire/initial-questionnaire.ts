@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
+import { NativeStorage } from 'ionic-native';
 import {RootPageProvider} from "../../../providers/rootpage";
 import {TabsPage} from "../../tabs-page/tabs-page";
 import {Validators, FormBuilder } from '@angular/forms';
@@ -27,11 +28,13 @@ export class InitialQuestionnaire {
 
 
   constructor(public navCtrl: NavController,
-    public rootPageProvider: RootPageProvider,
-    public formBuilder: FormBuilder,
-    public userProvider: UserProvider,
-    public logProvider: LogProvider
-  ) {
+              public navParams: NavParams,
+              public rootPageProvider: RootPageProvider,
+              public formBuilder: FormBuilder,
+              public userProvider: UserProvider,
+              public logProvider: LogProvider
+              ) {
+
 
     this.fireAuth = firebase.auth();
 
@@ -64,21 +67,27 @@ export class InitialQuestionnaire {
      // Email not working as path, use UID?
         this.userProvider.getCurrentUser().subscribe((user) => {
           debugger;
-          this.userRef = firebase.database().ref('dataLog/' + user.uid); 
+          this.userRef = firebase.database().ref('dataLog/' + user.uid);
           this.userRef.update({
             age: this.questionnaire.value.age,
             gender: this.questionnaire.value.gender,
             major: this.questionnaire.value.major
           });
         })
-    
+
     // Set First start here
     this.logProvider.logCounter("appOpening_count").subscribe(() =>{
         this.logProvider.logTime("appOpening_count", "appOpening");
     });
 
-
-    this.rootPageProvider.setRootPage(TabsPage, {}, { "animate": true, "direction": "exit" });
+    //set initialOpening property in local storage
+    NativeStorage.setItem('initialOpening', {value: false}).then(data => {
+      console.log("initial opening set: "+data);
+      this.rootPageProvider.setRootPage(TabsPage, this.navParams, { "animate": true, "direction": "exit" });
+    }, error => {
+      console.error(error);
+      this.rootPageProvider.setRootPage(TabsPage, this.navParams, { "animate": true, "direction": "exit" });
+    });
   }
 
 }

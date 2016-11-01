@@ -55,6 +55,30 @@ export class ProfilePage {
               public questionProvider: QuestionProvider,
               public logProvider: LogProvider) {
 
+    this.refresh();
+  }
+
+  ionViewDidLoad() {
+    console.log('Hello ProfilePage Page');
+
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      this.user = user;
+    });
+  }
+
+  ionViewDidEnter() {
+    this.refresh();
+    console.log("ProfilePage did enter");
+    this.logProvider.logCounter("profilePage_count").subscribe();
+  }
+
+  logOut() {
+    this.userProvider.logoutUser().then(() => {
+      this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
+    });
+  }
+
+  refresh(){
     this.userProvider.getCurrentUser().subscribe((user) => {
       this.questionProvider.getThisWeeksPSL().subscribe((scores) => {
         var sum = 0;
@@ -96,24 +120,6 @@ export class ProfilePage {
 
 
       })
-    });
-  }
-
-  ionViewDidLoad() {
-    console.log('Hello ProfilePage Page');
-
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      this.user = user;
-    });
-  }
-
-  ionViewDidEnter() {
-   this.logProvider.logCounter("profilePage_count").subscribe();
-  }
-
-  logOut() {
-    this.userProvider.logoutUser().then(() => {
-      this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
     });
   }
 
