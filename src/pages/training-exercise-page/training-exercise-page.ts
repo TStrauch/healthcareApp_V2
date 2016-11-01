@@ -1,10 +1,11 @@
 import { Component, trigger, state, style, transition, animate, keyframes } from '@angular/core';
-import { NavController, ViewController, ModalController  } from 'ionic-angular';
-import {TrainingProvider} from "../../providers/training-provider";
-import {UserProvider} from "../../providers/user-provider";
-import {Exercise} from "../../model/exercise";
-import {LogProvider} from "../../providers/log-provider";
-import {Questionnaire} from '../questionnaire/questionnaire'
+import { NavController, ViewController, ModalController } from 'ionic-angular';
+import { TrainingProvider } from "../../providers/training-provider";
+import { UserProvider } from "../../providers/user-provider";
+import { Exercise } from "../../model/exercise";
+import { LogProvider } from "../../providers/log-provider";
+import { QuestionProvider } from "../../providers/question-provider";
+import { Questionnaire } from '../questionnaire/questionnaire'
 
 
 /*
@@ -31,6 +32,7 @@ import {Questionnaire} from '../questionnaire/questionnaire'
 })
 export class TrainingExercisePage {
   counter: any;
+  trainingCounter: number;
   trainingData: Exercise[];
   actualExercise: Exercise;
   userRef: any;
@@ -41,13 +43,13 @@ export class TrainingExercisePage {
   clockText;
   cardState;
 
-
   constructor(public navCtrl: NavController,
     public userProvider: UserProvider,
     public trainingProvider: TrainingProvider,
     public viewCtrl: ViewController,
     public logProvider: LogProvider,
-    public modalCtrl: ModalController) {
+    public modalCtrl: ModalController,
+    public questionProvider: QuestionProvider) {
 
 
     this.logProvider.getCount("training_count").subscribe((data) => {
@@ -57,6 +59,7 @@ export class TrainingExercisePage {
         this.trainingData = trainingSet;
         this.cardState = 'in';
         this.actualExercise = this.trainingData[this.counter];
+        this.trainingCounter = data + 1;
 
         // -----------  
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
@@ -94,13 +97,19 @@ export class TrainingExercisePage {
         this.logProvider.logTraining("end");
 
 
-        // Set here syntax for triggering questionnaire
+       this.questionProvider.questionnaireAvailable().subscribe((data) => {
+        // Configure after how many trainings, a questionnaire should be created
+        if ((this.trainingCounter % 4 === 0) || data){
           this.modal = this.modalCtrl.create(Questionnaire, { category: 2 });
           this.modal.present().then(() => {
             this.viewCtrl.dismiss();
           });
-      
-
+        }  else{
+   
+        this.viewCtrl.dismiss();
+  
+        }
+       });
       }
     }
     // Start the counter

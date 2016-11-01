@@ -92,6 +92,7 @@ export class Questionnaire {
     else {
       //give answers to provider. provider then calculated PSS score and saves it to the db
       this.questionProvider.savePSS(this.answers);
+      this.logProvider.logLastQuestionnaire();
       this.viewCtrl.dismiss();
     }
 

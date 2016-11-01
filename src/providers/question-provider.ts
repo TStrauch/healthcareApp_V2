@@ -13,12 +13,14 @@ import * as Rx from 'rxjs';
 @Injectable()
 export class QuestionProvider {
   private pssRef: any;
+  questionnaireRef:any;
 
   constructor(public userProvider: UserProvider) {
 
     this.userProvider.getCurrentUser().subscribe((user) => {
       this.pssRef = firebase.database().ref('/pss');
       this.pssRef = this.pssRef.child(user.uid);
+      this.questionnaireRef = firebase.database().ref('/last_questionnaire/' + user.uid);
     })
 
   }
@@ -32,7 +34,6 @@ export class QuestionProvider {
   savePSS(values: [number]) {
     var pss = 0;
 
-    debugger;
     for (var item of values){
       let n = Number(item);
       pss += n;
@@ -42,6 +43,22 @@ export class QuestionProvider {
     pushRef.set({
       "date": moment().toDate().getTime(),
       "score": pss
+    })
+  }
+
+  questionnaireAvailable(){
+     return Rx.Observable.create((observer) => {
+      let lastWeek = moment().subtract(7,'days').format();
+      this.questionnaireRef.on('value', (snapshot) => {
+        debugger;
+        console.log(snapshot.val() + " " + lastWeek);
+        if(moment(snapshot.val()).isBefore(lastWeek)){
+          observer.next(true);
+        } else{
+          observer.next(false);
+        }
+        observer.complete();
+      })
     })
   }
 

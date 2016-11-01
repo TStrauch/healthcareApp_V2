@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {UserProvider} from './user-provider';
+import { UserProvider } from './user-provider';
 import 'rxjs/add/operator/map';
 import * as Rx from 'rxjs';
 import moment from 'moment';
@@ -40,8 +40,6 @@ export class LogProvider {
     })
   }
 
-
-
   logTraining(path) {
     this.userProvider.getCurrentUser().subscribe((user) => {
 
@@ -54,8 +52,8 @@ export class LogProvider {
       });
 
       //log training finished to the application-used log area
-      if(path == 'end'){
-        var trainingLogRef = firebase.database().ref('/trainingLog/'+user.uid);
+      if (path == 'end') {
+        var trainingLogRef = firebase.database().ref('/trainingLog/' + user.uid);
         var trainingPushRef = trainingLogRef.push();
         var today = moment();
         trainingPushRef.set({
@@ -79,6 +77,7 @@ export class LogProvider {
       });
     });
   }
+
 
 
   logTime(path, name) {
@@ -109,16 +108,25 @@ export class LogProvider {
 
   }
 
-
-  getTrainingChartDataWeek(): any{
-    return Rx.Observable.create((observer) => {
-      this.userProvider.getCurrentUser().subscribe((user) => {
-        let trainingRef = firebase.database().ref('/trainingLog/'+user.uid);
-        let lastWeek = moment().subtract(7,'days').dayOfYear();
-        trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
-          observer.next(snapshot.val());observer.complete();
-        })
-      });
+  logLastQuestionnaire() {
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      this.logRef = firebase.database().ref('/last_questionnaire');
+      var tempName = user.uid;
+      var updateObject = {};
+      updateObject[tempName] = moment().format();
+      this.logRef.update(updateObject);
     });
-  }
+}
+
+getTrainingChartDataWeek(): any {
+  return Rx.Observable.create((observer) => {
+    this.userProvider.getCurrentUser().subscribe((user) => {
+      let trainingRef = firebase.database().ref('/trainingLog/' + user.uid);
+      let lastWeek = moment().subtract(7, 'days').dayOfYear();
+      trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
+        observer.next(snapshot.val()); observer.complete();
+      })
+    });
+  });
+}
 }
