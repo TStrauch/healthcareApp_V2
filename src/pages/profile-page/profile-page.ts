@@ -37,8 +37,8 @@ export class ProfilePage {
   };
   public lineChartColors: Array<any> = [
     { // grey
-      backgroundColor: 'rgba(39,174,96,0.2)',
-      borderColor: 'rgba(39,174,96,1)',
+      backgroundColor: 'rgba(26,188,156,0.2)',
+      borderColor: 'rgba(26,188,156,1)',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',

@@ -6,40 +6,63 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>ProfilePage</ion-title>
-    <ion-buttons end>
-      <button ion-button icon-only (click)="logOut()">
+	<ion-navbar>
+		<ion-title>ProfilePage</ion-title>
+		<ion-buttons end>
+			<button ion-button icon-only (click)="logOut()">
         <ion-icon name="log-out"></ion-icon>
       </button>
-    </ion-buttons>
-  </ion-navbar>
+		</ion-buttons>
+	</ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <ion-grid>
+	<ion-grid>
+		<ion-row>
+			<ion-col class="center" width-100>
+				<div *ngIf="user">
+					<h2>Hey Dude!</h2>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col width-100>
+				<div>
+					Your actual Stress-Level
+          <hr class="line">
+				</div>
+			</ion-col>
+		</ion-row>
 
+<ion-row>
+			<ion-col class="center" width-100>
+				<div class="score">
+					{{stress_score}}
+				</div>
+			</ion-col>
+		</ion-row>
+		
     <ion-row>
-      <h2>
-        <div *ngIf="user"> Hello {{user.email}}!</div>
-      </h2>
-    </ion-row>
-    <ion-row>
-      <div>Your current stress level is {{stress_score}}</div>
-    </ion-row>
-    <ion-row>
-      <!--<ion-col offset-10 width-80>-->
-        <!-- some chart experimentation -->
+			<ion-col width-100>
+				<div>
+					Your Training Results
+          <hr class="line">
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<!--<ion-col offset-10 width-80>-->
+			<!-- some chart experimentation -->
 
-        <canvas baseChart width="100%" height="100%" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
-          [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
-        <!--(chartHover)="chartHovered($event)"-->
-        <!--(chartClick)="chartClicked($event)"-->
-      <!--</ion-col>-->
-    </ion-row>
-    </ion-grid>
+			<canvas baseChart width="100%" height="100%" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+				[colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+			<!--(chartHover)="chartHovered($event)"-->
+			<!--(chartClick)="chartClicked($event)"-->
+			<!--</ion-col>-->
+		</ion-row>
+	</ion-grid>
 
 
 

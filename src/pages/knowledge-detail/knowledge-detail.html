@@ -19,6 +19,44 @@
 		<img [src]="exerciseInfo.image" />
 	</ion-card>
 
+	<ion-grid>
+
+		<ion-row>
+			<ion-col width-100>
+				<div>
+					Description
+					<hr class="line">
+				</div>
+			</ion-col>
+		</ion-row>
+
+		<ion-row>
+			<ion-col width-100>
+				<div class="score">
+					{{exerciseInfo.description}}
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="space">
+			<ion-col width-100>
+				<div>
+					Effect
+					<hr class="line">
+				</div>
+			</ion-col>
+		</ion-row>
+
+		<ion-row>
+			<ion-col width-100>
+				<ion-icon name="add-circle"> {{exerciseInfo.goal}}</ion-icon>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+	<!---
+	<ion-card>
+		<img [src]="exerciseInfo.image" />
+	</ion-card>
+
 	<div class="sectionName">Description</div>
   <hr>
 
@@ -28,4 +66,6 @@
 	<div class="sectionName">Effect</div>
 	<hr>
 	  <ion-icon name="add-circle">  {{exerciseInfo.goal}}</ion-icon>
+
+    -->
 </ion-content>
