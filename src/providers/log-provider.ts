@@ -82,13 +82,13 @@ export class LogProvider {
 
 
   logTime(path, name) {
+    var time = new Date().getTime();
     this.userProvider.getCurrentUser().subscribe((user) => {
-
       this.logRef = firebase.database().ref('dataLog/' + user.uid + "/" + path);
       this.logRef.once('value', (snapshot) => {
         var tempName = name + "_" + snapshot.val() + "_time";
         var updateObject = {};
-        updateObject[tempName] = new Date().getTime();
+        updateObject[tempName] = time;
         this.logRef.parent.update(updateObject);
       });
     });

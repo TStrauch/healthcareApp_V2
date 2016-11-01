@@ -6,6 +6,7 @@ import {LoginPage} from "../../login/login";
 import {Signup} from "../../signup/signup";
 import {InitialQuestionnaire} from "../initial-questionnaire/initial-questionnaire";
 import { Push, PushToken } from '@ionic/cloud-angular';
+import {TabsPage} from "../../tabs-page/tabs-page";
 /*
   Generated class for the IntroductionPage page.
 
@@ -24,34 +25,29 @@ export class IntroductionPage {
               public push: Push) {}
 
   accept(){
-
-  //   NativeStorage.setItem('introduction', {seen: true})
-  // .then(
-  //   () => console.log('Stored item!'),
-  //   error => console.error('Error storing item', error)
-  // );
-
     /**
      * comment this out when testing via browser
      */
-    // this.push.register().then((t: PushToken) => {
-    //   return this.push.saveToken(t);
-    // }).then((t: PushToken) => {
-    //   console.log('Token saved:', t.token);
-    //   this._iosPushRegistration();
-    // });
+    this.push.register().then((t: PushToken) => {
+      return this.push.saveToken(t);
+    }).then((t: PushToken) => {
+      console.log('Token saved:', t.token);
+      this._iosPushRegistration();
+    });
 
     /**
      * comment this in when testing via browser
      */
-    let loginDoneNavOptions = {
-      "page" : InitialQuestionnaire,
-      "navParams" : {},
-      "navOpt" : {"animate": true, "direction": "forward"}
-    }
-    this.rootPageProvider.setRootPage(Signup,
-      {"initial": true, "loginDoneNavOptions": loginDoneNavOptions}, {"animate": true, "direction": "forward"}
-    );
+    // let loginDoneNavOptions = {
+    //   "pageSignup": InitialQuestionnaire,
+    //   "pageLogin" : TabsPage,
+    //   "navParamsSignup" : {},
+    //   "navParamsLogin" : {initialOpening: true},
+    //   "navOpt" : {"animate": true, "direction": "forward"}
+    // }
+    // this.rootPageProvider.setRootPage(Signup,
+    //   {"initial": true, "loginDoneNavOptions": loginDoneNavOptions}, {"animate": true, "direction": "forward"}
+    // );
 
   }
 
@@ -93,8 +89,10 @@ export class IntroductionPage {
         if (data.isEnabled) {
           console.log('[Cordova plugin] Push is Enabled');
           let loginDoneNavOptions = {
-            "page" : InitialQuestionnaire,
-            "navParams" : {},
+            "pageSignup": InitialQuestionnaire,
+            "pageLogin" : TabsPage,
+            "navParamsSignup" : {},
+            "navParamsLogin" : {initialOpening: true},
             "navOpt" : {"animate": true, "direction": "forward"}
           }
           that.rootPageProvider.setRootPage(Signup,
