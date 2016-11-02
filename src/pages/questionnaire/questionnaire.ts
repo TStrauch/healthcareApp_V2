@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {NavController, Platform, NavParams, ViewController} from 'ionic-angular';
-import {QuestionProvider} from "../../providers/question-provider";
-import {LogProvider} from "../../providers/log-provider";
+import { NavController, Platform, NavParams, ViewController } from 'ionic-angular';
+import { QuestionProvider } from "../../providers/question-provider";
+import { LogProvider } from "../../providers/log-provider";
 import * as moment from 'moment';
 
 /*
@@ -43,10 +43,10 @@ export class Questionnaire {
 
     // Increase counter and log start time
     this.logProvider.logCounter("questionnaire_count").subscribe(() => {
-        this.logProvider.logTime("questionnaire_count", "questionnaire");
+      this.logProvider.logTime("questionnaire_count", "questionnaire");
     });
 
-   this.answers = [];
+    this.answers = [];
 
 
 
@@ -78,24 +78,25 @@ export class Questionnaire {
     //Add here the sending to firebase, if structure is clear
     //---------------------------------------------
 
-    this.logProvider.logQuestion(this.actualQuestion.id, this.form);
+    this.logProvider.logQuestion(this.actualQuestion.id, this.form).subscribe(() => {
+    
+      console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
 
-    console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
+      this.answers.push(this.form);
 
-    this.answers.push(this.form);
+      if (this.counter < (this.length - 1)) {
+        this.counter++;
+        this.actualQuestion = this.questions[this.counter];
+        this.form = null;
+      }
+      else {
+        //give answers to provider. provider then calculated PSS score and saves it to the db
+        this.questionProvider.savePSS(this.answers);
+        this.logProvider.logLastQuestionnaire();
+        this.viewCtrl.dismiss();
+      }
 
-    if (this.counter < (this.length - 1)) {
-      this.counter++;
-      this.actualQuestion = this.questions[this.counter];
-      this.form = null;
-    }
-    else {
-      //give answers to provider. provider then calculated PSS score and saves it to the db
-      this.questionProvider.savePSS(this.answers);
-      this.logProvider.logLastQuestionnaire();
-      this.viewCtrl.dismiss();
-    }
-
+    });
   }
 
   ionViewDidLoad() {

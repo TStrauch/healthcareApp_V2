@@ -65,15 +65,18 @@ export class LogProvider {
     });
   }
 
-  logQuestion(questionId, questionAnswer) {
-    this.userProvider.getCurrentUser().subscribe((user) => {
-
-      this.logRef = firebase.database().ref('dataLog/' + user.uid + "/questionnaire_count");
-      this.logRef.once('value', (snapshot) => {
-        var tempName = "questionnaire_" + snapshot.val() + "_" + questionId;
-        var updateObject = {};
-        updateObject[tempName] = questionAnswer;
-        this.logRef.parent.update(updateObject);
+  logQuestion(questionId, questionAnswer):any {
+    return Rx.Observable.create((observer) => {
+      this.userProvider.getCurrentUser().subscribe((user) => {
+        this.logRef = firebase.database().ref('dataLog/' + user.uid + "/questionnaire_count");
+        this.logRef.once('value', (snapshot) => {
+          var tempName = "questionnaire_" + snapshot.val() + "_" + questionId;
+          var updateObject = {};
+          updateObject[tempName] = questionAnswer;
+          this.logRef.parent.update(updateObject);
+          observer.next()
+          observer.complete();
+        });
       });
     });
   }
@@ -116,17 +119,17 @@ export class LogProvider {
       updateObject[tempName] = moment().format();
       this.logRef.update(updateObject);
     });
-}
+  }
 
-getTrainingChartDataWeek(): any {
-  return Rx.Observable.create((observer) => {
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      let trainingRef = firebase.database().ref('/trainingLog/' + user.uid);
-      let lastWeek = moment().subtract(7, 'days').dayOfYear();
-      trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
-        observer.next(snapshot.val()); observer.complete();
-      })
+  getTrainingChartDataWeek(): any {
+    return Rx.Observable.create((observer) => {
+      this.userProvider.getCurrentUser().subscribe((user) => {
+        let trainingRef = firebase.database().ref('/trainingLog/' + user.uid);
+        let lastWeek = moment().subtract(7, 'days').dayOfYear();
+        trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
+          observer.next(snapshot.val()); observer.complete();
+        })
+      });
     });
-  });
-}
+  }
 }
