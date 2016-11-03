@@ -98,8 +98,8 @@ export class TrainingExercisePage {
 
 
        this.questionProvider.questionnaireAvailable().subscribe((data) => {
-        // Configure after how many trainings, a questionnaire should be created
-        if ((this.trainingCounter % 4 === 0) || data){
+        // Configure after how many trainings, a questionnaire should be created (starting with the first)
+        if ((this.trainingCounter % 4 === 1) || data){
           this.modal = this.modalCtrl.create(Questionnaire, { category: 2 });
           this.modal.present().then(() => {
             this.viewCtrl.dismiss();
