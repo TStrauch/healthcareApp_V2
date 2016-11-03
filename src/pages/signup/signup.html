@@ -8,7 +8,8 @@
 
 
 <ion-content padding>
-  <img src="http://placehold.it/300x100">
+  <!--<img src="http://placehold.it/300x100">-->
+  <div style="height:15%;"></div>
   <form [formGroup]="signupForm" (submit)="signupUser()" novalidate>
 
     <ion-item>
@@ -31,7 +32,7 @@
       <p>Your password needs more than 6 characters.</p>
     </ion-item>
 
-    <button ion-button block type="submit">
+    <button class="tj-submitbtn" ion-button block type="submit">
       Create an Account
     </button>
 

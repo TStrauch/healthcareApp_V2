@@ -41,6 +41,7 @@ export class MyApp {
     public userProvider: UserProvider,
     public logProvider: LogProvider) {
 
+
     /**
      * firebase setup
      */
@@ -82,7 +83,9 @@ export class MyApp {
     if(!platform.is('cordova')){
       this.initialOpening = false;
     }
-    firebase.auth().onAuthStateChanged((user) => {
+    // firebase.auth().onAuthStateChanged((user) => {
+    this.userProvider.getCurrentUser().subscribe((user) => {
+
       NativeStorage.getItem('initialOpening').then(data => {
         console.log("initial opening retrieved: "+data);
         this.initialOpening = data.value;
@@ -98,7 +101,6 @@ export class MyApp {
           this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
         }
       });
-
     });
 
 

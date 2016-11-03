@@ -18,6 +18,7 @@ export class UserProvider {
 
   public fireAuth: any;
   public userProfile: any;
+  public experimentGroupRef: any;
   public logRef: any;
 
   user: any = null;
@@ -36,6 +37,7 @@ export class UserProvider {
 
     this.fireAuth = firebase.auth();
     this.userProfile = firebase.database().ref('/userProfile');
+    this.experimentGroupRef = firebase.database().ref('/experiment_groups');
   }
 
 
@@ -160,38 +162,44 @@ export class UserProvider {
     //first create the firebase user
     this.fireAuth.createUserWithEmailAndPassword(email, password).then((newUser) => {
 
-      //now create the ionic user
-      let details: UserDetails = { 'email': email, 'password': password, 'name': 'Experiment_id_placeholder' };
-      this.auth.signup(details).then(() => {
+      //determine which experiment group the user should be assigned to
+      this.assignExperimentGroup(newUser.uid).subscribe((groupid) => {
 
-        //sign-in and add all relevant data to the firebase user object
-        this.loginUser(email, password).subscribe((user) => {
-          this.userProfile.child(newUser.uid).set({
-            email: email,
-            training_count: 0,
-            experiment_group_id: details.name,
-            ionic_uuid: this.ionicUser.id
+        //now create the ionic user
+        let details: UserDetails = { 'email': email, 'password': password, 'name': groupid };
+        this.auth.signup(details).then(() => {
+
+
+          //sign-in and add all relevant data to the firebase user object
+          this.loginUser(email, password).subscribe((user) => {
+            this.userProfile.child(newUser.uid).set({
+              email: email,
+              training_count: 0,
+              experiment_group_id: details.name,
+              ionic_uuid: this.ionicUser.id
+            });
+
+            // set all counters, which are required for logging data
+            this.logRef = firebase.database().ref('dataLog/' + newUser.uid);
+            this.logRef.set({
+              profilePage_count: 0,
+              knowledgePage_count: 0,
+              training_count: 0,
+              appOpening_count: 0,
+              questionnaire_count: 0
+            });
+
+
+
+            // Add data logo elements
+            returnObserver.next();
+            returnObserver.complete();
           });
 
-          // set all counters, which are required for logging data
-          this.logRef = firebase.database().ref('dataLog/' + newUser.uid);
-          this.logRef.set({
-            profilePage_count: 0,
-            knowledgePage_count: 0,
-            training_count: 0,
-            appOpening_count: 0,
-            questionnaire_count: 0
-          });
-
-
-
-          // Add data logo elements
-          returnObserver.next();
+        }, (error) => {
+          returnObserver.error(error);
           returnObserver.complete();
         });
-      }, (error) => {
-        returnObserver.error(error);
-        returnObserver.complete();
       });
     }, (error) => {
       returnObserver.error(error);
@@ -201,16 +209,41 @@ export class UserProvider {
     return returnStream;
   }
 
-  //TODO: does not reset password yet for ionic. needs to be implemented!
-  //TODO: best would be to just overwrite the user object of ionic account with the new password
-  //TODO: how to do that? well one could set flag that the password will be reset and then at the next login
-  //TODO: attempt one could simply overwrite the ionic password.
-  //TODO: or: if the ionic login does not succeed but the google login does and the error message is wrong password
-  //TODO: then once could simply overwrite the password in general. that way the ionic account stays transparent.
-  //TODO: ALL OPTIONS NOT POSSIBLE! IN ORDER TO SET USER DATA THE USER HAS TO BE LOGGED IN ! ...
+  assignExperimentGroup(userid: string): any{
+    return Rx.Observable.create((observer) => {
 
-  //TODO: try sending directly via the API https://docs.ionic.io/api/http.html with API access token
-  //TODO: to delete the user when the firebase password got reset.
+      this.experimentGroupRef.once('value', (snapshot) => {
+
+        let groups = snapshot.val();
+
+        //find smallest group
+        var smallestGroupId = "";
+        var smallestGroupCountMembers = 1000000;
+
+        Object.keys(groups).forEach((key) => {
+          if(groups[key].members){
+            if(Object.keys(groups[key].members).length < smallestGroupCountMembers){
+              smallestGroupCountMembers = Object.keys(groups[key].members).length;
+              smallestGroupId = key;
+            }
+          }
+          else{
+            smallestGroupCountMembers = 0;
+            smallestGroupId = key;
+          }
+        });
+
+        let groupMemberRef = firebase.database().ref('/experiment_groups/'+smallestGroupId+"/members").push();
+        groupMemberRef.set({
+          "uid": userid
+        });
+
+        observer.next(smallestGroupId);
+        observer.complete();
+      });
+    });
+  }
+
   resetPassword(email: string): any {
     return this.fireAuth.sendPasswordResetEmail(email);
   }

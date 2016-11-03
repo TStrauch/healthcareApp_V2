@@ -28,6 +28,7 @@ export class KnowledgeDetailPage {
    //  this.id = navParams.get("id");
    //
    //
+
    //  this.trainingProvider.getSingleExercise(this.id).then(data => {
    //    this.exerciseInfo = data;
    //  });

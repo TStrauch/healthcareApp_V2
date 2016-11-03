@@ -79,7 +79,7 @@ export class Questionnaire {
     //---------------------------------------------
 
     this.logProvider.logQuestion(this.actualQuestion.id, this.form).subscribe(() => {
-    
+
       console.log('Question Nr:   ' + this.actualQuestion.id + '   Answer:' + this.form);
 
       this.answers.push(this.form);
