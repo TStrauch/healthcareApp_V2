@@ -92,14 +92,11 @@ export class TrainingExercisePage {
         this.initTimer();
       } else {
 
-
         // Set timestamp for finished training
         this.logProvider.logTraining("end");
 
-
-       this.questionProvider.questionnaireAvailable().subscribe((data) => {
-        // Configure after how many trainings, a questionnaire should be created (starting with the first)
-        if ((this.trainingCounter % 4 === 1) || data){
+       this.questionProvider.questionnaireAvailable(this.trainingCounter).subscribe((data) => {
+        if (data){
           this.modal = this.modalCtrl.create(Questionnaire, { category: 2 });
           this.modal.present().then(() => {
             this.viewCtrl.dismiss();

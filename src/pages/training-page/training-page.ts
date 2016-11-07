@@ -7,6 +7,7 @@ import {UserProvider} from "../../providers/user-provider";
 import {LogProvider} from "../../providers/log-provider";
 import {Exercise} from "../../model/exercise";
 
+
 /*
   Generated class for the TrainingPage page.
 
@@ -33,6 +34,8 @@ export class TrainingPage {
         this.trainingData = trainingSet;
         console.log(this.trainingData);
       });
+
+     
     });
 
      /* this.userProvider.getCurrentUser().subscribe((user) => {
