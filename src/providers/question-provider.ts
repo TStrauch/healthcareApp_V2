@@ -49,14 +49,24 @@ export class QuestionProvider {
     })
   }
 
-  savePSS(values: [number]) {
+  savePSS(data: any) {
+    let questions = data.questions;
+    let values = data.answers;
+
     var pss = 0;
 
-    for (var item of values) {
-      let n = Number(item);
-      pss += n;
+    for (var i=0; i < questions.length; i++){
+      let q = questions[i];
+      let v = values[i];
+
+      if(q.invertScale){
+        pss += (4 - Number(v));
+      }
+      else{
+        pss += Number(v);
+      }
     }
-    // pss = pss / values.length;
+
     var pushRef = this.pssRef.push();
     pushRef.set({
       "date": moment().toDate().getTime(),

@@ -61,9 +61,9 @@ export class TrainingExercisePage {
         this.actualExercise = this.trainingData[this.counter];
         this.trainingCounter = data + 1;
 
-        // -----------  
+        // -----------
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
-        // -----------  
+        // -----------
         this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
 
         //Count training and set timestamp
@@ -97,14 +97,14 @@ export class TrainingExercisePage {
 
        this.questionProvider.questionnaireAvailable(this.trainingCounter).subscribe((data) => {
         if (data){
-          this.modal = this.modalCtrl.create(Questionnaire, { category: 2 });
+          this.modal = this.modalCtrl.create(Questionnaire, { category: 3 });
           this.modal.present().then(() => {
             this.viewCtrl.dismiss();
           });
         }  else{
-   
+
         this.viewCtrl.dismiss();
-  
+
         }
        });
       }
@@ -148,7 +148,7 @@ export class TrainingExercisePage {
     }, 1000);
   }
 
-  // visualize 
+  // visualize
   visualizeClock(inputSeconds: number) {
     var sec_num = parseInt(inputSeconds.toString(), 10);
     var hours = Math.floor(sec_num / 3600);
@@ -162,9 +162,9 @@ export class TrainingExercisePage {
   }
 
   initTimer() {
-    // -----------  
+    // -----------
     //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
-    // -----------  
+    // -----------
     this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
   }
 

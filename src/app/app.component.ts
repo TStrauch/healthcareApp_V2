@@ -83,6 +83,7 @@ export class MyApp {
      */
     if(!platform.is('cordova')){
       this.initialOpening = false;
+      this.pNsEnabled = true;
     }
     // firebase.auth().onAuthStateChanged((user) => {
     this.userProvider.getCurrentUser().subscribe((user) => {
@@ -96,13 +97,13 @@ export class MyApp {
       }).then(() => {
         PushNotification.hasPermission().then((data) => {
           console.log("[App.Component] Push Notifications enabled: "+data.isEnabled);
-          if (data.isEnabled) {
+          if (data.isEnabled){
             this.pNsEnabled = true;
           }
           else{
             this.pNsEnabled = false;
           }
-        }).then(() => {
+        }, error => {console.log('error')}).then(() => {
           console.log("[App.Component] Initial: "+this.initialOpening+"; PNs enabled: "+this.pNsEnabled);
           if (user && !this.initialOpening && this.pNsEnabled) {
             this.rootPageProvider.setRootPage(TabsPage, {}, {});
