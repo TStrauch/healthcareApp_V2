@@ -98,6 +98,7 @@ export class UserProvider {
         //we will decide what type of error it is depending on the "error" object given into the callback
         //apparently ionic does not give some technical id for the type of error. only the message tells us the error
         //the problem with that is that they might change the message and the following logic will break then...
+        debugger;
         let msg = error.response.body.error.message;
         if (msg == this.IONIC_INVALID_PASSWORD) {
           // this seems to be error type 2.
@@ -166,16 +167,19 @@ export class UserProvider {
       this.assignExperimentGroup(newUser.uid).subscribe((groupid) => {
 
         //now create the ionic user
-        let details: UserDetails = { 'email': email, 'password': password, 'name': groupid };
+        let details: UserDetails = { 'email': email, 'password': password, 'custom': {"experimentgroup": groupid} };
         this.auth.signup(details).then(() => {
 
 
           //sign-in and add all relevant data to the firebase user object
           this.loginUser(email, password).subscribe((user) => {
+
+            let detailsAny: any = details;
+
             this.userProfile.child(newUser.uid).set({
               email: email,
               training_count: 0,
-              experiment_group_id: details.name,
+              experiment_group_id: detailsAny.custom.experimentgroup,
               ionic_uuid: this.ionicUser.id
             });
 
@@ -268,7 +272,7 @@ export class UserProvider {
   }
 
   __onlyIonicSignup(email: string, password: string, experiment_group_id: string): any {
-    let details: UserDetails = { 'email': email, 'password': password, 'name': experiment_group_id };
+    let details: UserDetails = { 'email': email, 'password': password, 'custom': {"experimentgroup": experiment_group_id} };
     return Rx.Observable.fromPromise(this.auth.signup(details));
   }
 
