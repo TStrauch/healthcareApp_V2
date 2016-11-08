@@ -113,7 +113,7 @@ export class LogProvider {
 
   logLastQuestionnaire() {
     this.userProvider.getCurrentUser().subscribe((user) => {
-      this.logRef = firebase.database().ref('/last_questionnaire');
+      this.logRef = firebase.database().ref('/last_questionnaire/');
       var tempName = user.uid;
       var updateObject = {};
       updateObject[tempName] = moment().format();

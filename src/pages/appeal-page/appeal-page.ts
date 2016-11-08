@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {NavController, ViewController, NavParams} from 'ionic-angular';
+import { LogProvider } from "../../providers/log-provider";
 
 /*
   Generated class for the AppealPage page.
@@ -16,9 +17,14 @@ export class AppealPage {
 
   constructor(public navCtrl: NavController,
               public params: NavParams,
-              public viewCtrl: ViewController) {
+              public viewCtrl: ViewController,
+              public logProvider: LogProvider) {
 
     this.url = params.get("url");
+
+    this.logProvider.logCounter("appealPage_count").subscribe(() => {
+          this.logProvider.logTime("appealPage_count", "appealOpening");
+        });
 
   }
 
