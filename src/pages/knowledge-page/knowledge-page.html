@@ -12,33 +12,33 @@
 		<ion-list-header>
 			Eye Exercises
 		</ion-list-header>
-		<ion-item *ngFor="let exercise of exercisesEye; let i = index;" (click)="exerciseSelected(3,i)">
+		<button ion-item *ngFor="let exercise of exercisesEye; let i = index;" (click)="exerciseSelected(3,i)">
 			<ion-avatar item-left>
 				<img [src]="exercise.image">
 			</ion-avatar>
 			<h2>{{exercise.name}}</h2>
-		</ion-item>
+		</button>
 	</ion-list>
 	<ion-list>
 		<ion-list-header>
 			Neck Exercises
 		</ion-list-header>
-		<ion-item *ngFor="let exercise of exercisesNeck; let i = index;" (click)="exerciseSelected(1,i)">
+		<button ion-item *ngFor="let exercise of exercisesNeck; let i = index;" (click)="exerciseSelected(1,i)">
 		<ion-avatar item-left>
 				<img [src]="exercise.image">
 			</ion-avatar>
 			<h2>{{exercise.name}}</h2>
-		</ion-item>
+		</button>
 	</ion-list>
 	<ion-list>
 		<ion-list-header>
 			Shoulder Exercises
 		</ion-list-header>
-		<ion-item *ngFor="let exercise of exercisesShoulder; let i = index;" (click)="exerciseSelected(2,i)">
+		<button ion-item *ngFor="let exercise of exercisesShoulder; let i = index;" (click)="exerciseSelected(2,i)">
 		<ion-avatar item-left>
 				<img [src]="exercise.image">
 			</ion-avatar>
 			<h2>{{exercise.name}}</h2>
-		</ion-item>
+		</button>
 	</ion-list>
 </ion-content>

@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import {Platform, ModalController, NavController} from 'ionic-angular';
-import { StatusBar, NativeStorage, BackgroundMode } from 'ionic-native';
+import { StatusBar, NativeStorage, Push as PushNotification } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
 import {IntroductionPage} from '../pages/initial-start/introduction-page/introduction-page';
@@ -28,6 +28,7 @@ export class MyApp {
   rootPage;
   modal;
   initialOpening = true;
+  pNsEnabled = false;
 
   ngAfterViewInit() {
 
@@ -93,13 +94,24 @@ export class MyApp {
         console.log("initial opening could not be retrieved!!")
         console.error(error);
       }).then(() => {
-        if (user && !this.initialOpening) {
-          this.rootPageProvider.setRootPage(TabsPage, {}, {});
-        } else if(this.initialOpening) {
-          this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-        } else{
-          this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-        }
+        PushNotification.hasPermission().then((data) => {
+          console.log("[App.Component] Push Notifications enabled: "+data.isEnabled);
+          if (data.isEnabled) {
+            this.pNsEnabled = true;
+          }
+          else{
+            this.pNsEnabled = false;
+          }
+        }).then(() => {
+          console.log("[App.Component] Initial: "+this.initialOpening+"; PNs enabled: "+this.pNsEnabled);
+          if (user && !this.initialOpening && this.pNsEnabled) {
+            this.rootPageProvider.setRootPage(TabsPage, {}, {});
+          } else if(this.initialOpening || !this.pNsEnabled) {
+            this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+          } else{
+            this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
+          }
+        });
       });
     });
 
@@ -138,6 +150,15 @@ export class MyApp {
         this.logProvider.logTime("appOpening_count", "appOpening");
       });
       console.log("platform resume triggered");
+
+      PushNotification.hasPermission().then((data) => {
+        if (data.isEnabled) {
+          //
+        }
+        else{
+          this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+        }
+      });
     });
 
     /**
