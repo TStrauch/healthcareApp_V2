@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Request, RequestMethod, Headers} from '@angular/http';
+import { Http, RequestOptions, Request, RequestMethod, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import * as Rx from 'rxjs';
-import {Auth, User, UserDetails, IDetailedError} from '@ionic/cloud-angular';
+import { Auth, User, UserDetails, IDetailedError } from '@ionic/cloud-angular';
 
 /*
   Generated class for the UserProvider provider.
@@ -20,8 +20,10 @@ export class UserProvider {
   public userProfile: any;
   public experimentGroupRef: any;
   public logRef: any;
+  public configurationRef: any;
 
   user: any = null;
+  configuration: any = null;
 
   //constants
   public readonly IONIC_INVALID_PASSWORD = "Invalid password";
@@ -40,6 +42,33 @@ export class UserProvider {
     this.experimentGroupRef = firebase.database().ref('/experiment_groups');
   }
 
+
+  getViewConfiguration(): any {
+    if (this.configuration != null) {
+      return Rx.Observable.create((observer) => {
+        observer.next(this.configuration);
+        observer.complete();
+      });
+    }
+    else {
+      return Rx.Observable.create((observer) => {
+        this.getCurrentUser().subscribe((user) => {
+          var configKnowledgeRef = firebase.database().ref('experiment_groups/' + user.experiment_group_id + '/show_knowledgeview');
+          configKnowledgeRef.on('value', (knowledgeView) => {
+            var configProfilRef = firebase.database().ref('experiment_groups/' + user.experiment_group_id + '/show_profileview');
+            configProfilRef.on('value', (profileView) => {
+              this.configuration = {
+                showKnowledgeView: knowledgeView.val(),
+                showProfileView: profileView.val()
+              }
+              observer.next(this.configuration)
+              observer.complete();
+            });
+          });
+        });
+      });
+    }
+  }
 
   getCurrentUser(): any {
     if (this.user != null) {
@@ -167,7 +196,7 @@ export class UserProvider {
       this.assignExperimentGroup(newUser.uid).subscribe((groupid) => {
 
         //now create the ionic user
-        let details: UserDetails = { 'email': email, 'password': password, 'custom': {"experimentgroup": groupid} };
+        let details: UserDetails = { 'email': email, 'password': password, 'custom': { "experimentgroup": groupid } };
         this.auth.signup(details).then(() => {
 
 
@@ -214,7 +243,7 @@ export class UserProvider {
     return returnStream;
   }
 
-  assignExperimentGroup(userid: string): any{
+  assignExperimentGroup(userid: string): any {
     return Rx.Observable.create((observer) => {
 
       this.experimentGroupRef.once('value', (snapshot) => {
@@ -226,19 +255,19 @@ export class UserProvider {
         var smallestGroupCountMembers = 1000000;
 
         Object.keys(groups).forEach((key) => {
-          if(groups[key].members){
-            if(Object.keys(groups[key].members).length < smallestGroupCountMembers){
+          if (groups[key].members) {
+            if (Object.keys(groups[key].members).length < smallestGroupCountMembers) {
               smallestGroupCountMembers = Object.keys(groups[key].members).length;
               smallestGroupId = key;
             }
           }
-          else{
+          else {
             smallestGroupCountMembers = 0;
             smallestGroupId = key;
           }
         });
 
-        let groupMemberRef = firebase.database().ref('/experiment_groups/'+smallestGroupId+"/members").push();
+        let groupMemberRef = firebase.database().ref('/experiment_groups/' + smallestGroupId + "/members").push();
         groupMemberRef.set({
           "uid": userid
         });
@@ -272,7 +301,7 @@ export class UserProvider {
   }
 
   __onlyIonicSignup(email: string, password: string, experiment_group_id: string): any {
-    let details: UserDetails = { 'email': email, 'password': password, 'custom': {"experimentgroup": experiment_group_id} };
+    let details: UserDetails = { 'email': email, 'password': password, 'custom': { "experimentgroup": experiment_group_id } };
     return Rx.Observable.fromPromise(this.auth.signup(details));
   }
 
