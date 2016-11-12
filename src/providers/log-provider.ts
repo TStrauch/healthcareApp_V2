@@ -61,11 +61,42 @@ export class LogProvider {
           "day": today.dayOfYear(),
           "month": today.month()
         });
+
+
+        var trainingLogAllUserRef = firebase.database().ref('/trainingLogAllUsers');
+        trainingLogAllUserRef.orderByChild("day").equalTo(today.dayOfYear()).once('value', (snapshot) => {
+          var results = snapshot.val();
+
+          // check if a value exists, otherwise just update 
+          if (results == null) {
+            var trainingLogAllUserSaveRef = firebase.database().ref('/trainingLogAllUsers/');
+            var trainingAllPushRef = trainingLogAllUserSaveRef.push();
+            trainingAllPushRef.set({
+              "date": today.toDate().getTime(),
+              "day": today.dayOfYear(),
+              "year": today.year(),
+              "counter": 1
+            });
+          } else {
+            debugger;
+            console.log(results.key);
+            snapshot.forEach(function (singleObject) {
+              // need to check year if the year fits...
+              var trainingLogAllUserUpdateRef = firebase.database().ref('/trainingLogAllUsers/' + singleObject.key);
+              trainingLogAllUserUpdateRef.child('counter').transaction(function (counter) {
+                return counter + 1;
+              })
+              //Loops forEach() one time
+              return true;
+            });
+
+          }
+        });
       }
     });
   }
 
-  logQuestion(questionId, questionAnswer):any {
+  logQuestion(questionId, questionAnswer): any {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
         this.logRef = firebase.database().ref('dataLog/' + user.uid + "/questionnaire_count");
@@ -130,6 +161,16 @@ export class LogProvider {
           observer.next(snapshot.val()); observer.complete();
         })
       });
+    });
+  }
+
+  getTrainingChartDataAllUsersWeek(): any {
+    return Rx.Observable.create((observer) => {
+        let trainingAllRef = firebase.database().ref('/trainingLogAllUsers');
+        let lastWeek = moment().subtract(7, 'days').dayOfYear();
+        trainingAllRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
+          observer.next(snapshot.val()); observer.complete();
+        })
     });
   }
 }

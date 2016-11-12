@@ -223,7 +223,10 @@ export class UserProvider {
               appealPage_count: 0
             });
 
-
+            // count all users
+            this.userProfile.child('user_count').transaction(function (counter) {
+              return counter + 1;
+            })
 
             // Add data logo elements
             returnObserver.next();
@@ -341,5 +344,14 @@ export class UserProvider {
         observer.complete();
       });
     })
+  }
+
+  getNumberOfUsers(): any {
+    return Rx.Observable.create((observer) => {
+        var userCounterRef = firebase.database().ref('/userProfile/user_count');
+        userCounterRef.on('value', (snapshot) => {
+          observer.next(snapshot.val()); observer.complete();
+        })
+    });
   }
 }
