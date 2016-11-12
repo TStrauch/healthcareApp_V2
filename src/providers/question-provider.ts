@@ -99,6 +99,9 @@ export class QuestionProvider {
       let lastWeek = moment().subtract(7, 'days').toDate().getTime();
       this.pssRef.orderByChild('date').startAt(lastWeek).on('value', (snapshot) => {
         var results = snapshot.val();
+        if (results == null){
+          results = [];
+        }
         observer.next(results); observer.complete();
       })
     })

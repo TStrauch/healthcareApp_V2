@@ -20,20 +20,28 @@ import moment from 'moment';
 })
 export class ProfilePage {
   user: any;
-  stress_score: number;
+  stress_score: any;
   // chart;
 
   // chart related stuff. would need to be put in a separate component
   public lineChartData: Array<any> = [
     {
-      data: [65, 59, 80, 81, 56, 55, 40],
+      data: [0, 0, 0, 0, 0, 0, 0],
       label: 'Your Performance'
     }
   ];
   public lineChartLabels: Array<any> = [];
   public lineChartOptions: any = {
     animation: false,
-    responsive: true
+    responsive: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          min: 0,
+          stepSize: 1
+        }
+      }]
+    }
   };
   public lineChartColors: Array<any> = [
     { // grey
@@ -45,7 +53,7 @@ export class ProfilePage {
       pointHoverBorderColor: 'rgba(148,159,177,0.8)'
     }
   ];
-  public lineChartLegend: boolean = true;
+  public lineChartLegend: boolean = false;
   public lineChartType: string = 'line';
 
 
@@ -85,8 +93,14 @@ export class ProfilePage {
         Object.keys(scores).forEach((key) => {
           sum += scores[key].score;
         });
-        sum = sum / Object.keys(scores).length;
-        this.stress_score = Math.round(sum * 100) / 100;
+        if(Object.keys(scores).length > 0){
+          sum = sum / Object.keys(scores).length;
+          this.stress_score = Math.round(sum * 100) / 100;
+        }
+        else{
+          this.stress_score = "Please do a few more trainings."
+        }
+
       });
 
       this.logProvider.getTrainingChartDataWeek().subscribe((data) => {
