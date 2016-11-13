@@ -51,9 +51,14 @@ export class InitialQuestionnaire {
       { value: 'f', display: 'Female' },
     ];
     this.major = [
-      { value: 'economics', display: 'Economics' },
       { value: 'business', display: 'Business' },
+      { value: 'culture', display: 'Culture' },
+      { value: 'engineering', display: 'Engineering' },
+      { value: 'economics', display: 'Economics' },
+      { value: 'medicine', display: 'Medicine' },
       { value: 'science', display: 'Science' }
+
+      
     ];
   }
 
