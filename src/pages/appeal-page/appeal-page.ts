@@ -14,6 +14,8 @@ import { LogProvider } from "../../providers/log-provider";
 })
 export class AppealPage {
   url: string;
+  title: string;
+  text: string;
 
   constructor(public navCtrl: NavController,
               public params: NavParams,
@@ -21,6 +23,8 @@ export class AppealPage {
               public logProvider: LogProvider) {
 
     this.url = params.get("url");
+    this.title = params.get("title");
+    this.text = params.get("text");
 
     this.logProvider.logCounter("appealPage_count").subscribe(() => {
           this.logProvider.logTime("appealPage_count", "appealOpening");

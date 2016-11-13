@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title></ion-title>
+    <ion-title>{{title}}</ion-title>
     <ion-buttons end>
       <button ion-button (click)="dismiss()">
         Exit
@@ -21,5 +21,6 @@
 <ion-content padding class="darkblue-bg">
 
   <img [src]="url" class="center">
+  <p style="color:white;">{{text}}</p>
 
 </ion-content>
