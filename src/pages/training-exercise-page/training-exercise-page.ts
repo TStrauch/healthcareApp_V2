@@ -64,7 +64,7 @@ export class TrainingExercisePage {
         // -----------
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
         // -----------
-        this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
+        this.timer = { seconds: 60, remainingTime: 60, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
 
         //Count training and set timestamp
         this.logProvider.logCounter("training_count").subscribe(() => {
@@ -165,7 +165,7 @@ export class TrainingExercisePage {
     // -----------
     //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
     // -----------
-    this.timer = { seconds: 5, remainingTime: 5, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
+    this.timer = { seconds: 60, remainingTime: 60, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
   }
 
 }
