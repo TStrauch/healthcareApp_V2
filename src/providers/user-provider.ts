@@ -136,7 +136,7 @@ export class UserProvider {
           // also get the ionic uuid from the firebase user object
           this.getCurrentUser().subscribe((user) => {
             this.__deleteIonicAccount(user.ionic_uuid).subscribe(() => {
-              this.__onlyIonicSignup(email, password, user.experiment_group_id).subscribe(() => {
+              this.__onlyIonicSignup(email, password, user.experiment_group_id, user.name).subscribe(() => {
                 this.__onlyIonicLogin(email, password).subscribe(() => {
                   //now set the new ionic uuid to the firebase object
                   var userRef = firebase.database().ref('userProfile/' + user.uid);
@@ -303,8 +303,8 @@ export class UserProvider {
       });
   }
 
-  __onlyIonicSignup(email: string, password: string, experiment_group_id: string): any {
-    let details: UserDetails = { 'email': email, 'password': password, 'custom': { "experimentgroup": experiment_group_id } };
+  __onlyIonicSignup(email: string, password: string, experiment_group_id: string, name: string): any {
+    let details: UserDetails = { 'email': email, 'password': password, 'name': name, 'custom': { "experimentgroup": experiment_group_id } };
     return Rx.Observable.fromPromise(this.auth.signup(details));
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {NavController, Platform} from 'ionic-angular';
 import {NativeStorage, Push as PushNotification} from 'ionic-native';
 import {RootPageProvider} from "../../../providers/rootpage";
 import {LoginPage} from "../../login/login";
@@ -22,32 +22,31 @@ export class IntroductionPage {
 
   constructor(public navCtrl: NavController,
               public rootPageProvider: RootPageProvider,
-              public push: Push) {}
+              public push: Push,
+              public platform: Platform) {}
 
   accept(){
-    /**
-     * comment this out when testing via browser
-     */
-    this.push.register().then((t: PushToken) => {
-      return this.push.saveToken(t);
-    }).then((t: PushToken) => {
-      console.log('Token saved:', t.token);
-      this._iosPushRegistration();
-    });
 
-    /**
-     * comment this in when testing via browser
-     */
-    // let loginDoneNavOptions = {
-    //   "pageSignup": InitialQuestionnaire,
-    //   "pageLogin" : TabsPage,
-    //   "navParamsSignup" : {},
-    //   "navParamsLogin" : {initialOpening: true},
-    //   "navOpt" : {"animate": true, "direction": "forward"}
-    // }
-    // this.rootPageProvider.setRootPage(Signup,
-    //   {"initial": true, "loginDoneNavOptions": loginDoneNavOptions}, {"animate": true, "direction": "forward"}
-    // );
+    if (this.platform.is('cordova')){
+      this.push.register().then((t: PushToken) => {
+        return this.push.saveToken(t);
+      }).then((t: PushToken) => {
+        console.log('Token saved:', t.token);
+        this._iosPushRegistration();
+      });
+    }
+    else{
+      let loginDoneNavOptions = {
+        "pageSignup": InitialQuestionnaire,
+        "pageLogin" : TabsPage,
+        "navParamsSignup" : {},
+        "navParamsLogin" : {initialOpening: true},
+        "navOpt" : {"animate": true, "direction": "forward"}
+      }
+      this.rootPageProvider.setRootPage(Signup,
+        {"initial": true, "loginDoneNavOptions": loginDoneNavOptions}, {"animate": true, "direction": "forward"}
+      );
+    }
 
   }
 

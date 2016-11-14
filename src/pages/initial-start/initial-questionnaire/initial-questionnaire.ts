@@ -6,6 +6,7 @@ import {TabsPage} from "../../tabs-page/tabs-page";
 import {Validators, FormBuilder } from '@angular/forms';
 import {UserProvider} from "../../../providers/user-provider";
 import {LogProvider} from "../../../providers/log-provider";
+import { User } from '@ionic/cloud-angular';
 import 'rxjs/add/operator/map';
 import * as Rx from 'rxjs';
 
@@ -26,13 +27,13 @@ export class InitialQuestionnaire {
   fireAuth: any;
   userRef: any;
 
-
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public rootPageProvider: RootPageProvider,
               public formBuilder: FormBuilder,
               public userProvider: UserProvider,
-              public logProvider: LogProvider
+              public logProvider: LogProvider,
+              public ionicUser: User
               ) {
 
 
@@ -40,6 +41,7 @@ export class InitialQuestionnaire {
 
 
     this.questionnaire = formBuilder.group({
+      name: ['', Validators.required],
       age: ['', Validators.compose([Validators.maxLength(2), Validators.pattern('[0-9]*'), Validators.required])],
       gender: ['', Validators.required],
       major: ['', Validators.required]
@@ -58,7 +60,7 @@ export class InitialQuestionnaire {
       { value: 'medicine', display: 'Medicine' },
       { value: 'science', display: 'Science' }
 
-      
+
     ];
   }
 
@@ -71,13 +73,16 @@ export class InitialQuestionnaire {
 
      // Email not working as path, use UID?
         this.userProvider.getCurrentUser().subscribe((user) => {
-          debugger;
           this.userRef = firebase.database().ref('dataLog/' + user.uid);
           this.userRef.update({
+            name: this.questionnaire.value.name,
             age: this.questionnaire.value.age,
             gender: this.questionnaire.value.gender,
             major: this.questionnaire.value.major
           });
+
+          this.ionicUser.details.name = this.questionnaire.value.name;
+          this.ionicUser.save();
         })
 
     // Set First start here

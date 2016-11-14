@@ -34,7 +34,7 @@ export class MyApp {
 
   }
 
-  constructor(platform: Platform,
+  constructor(public platform: Platform,
     public push: Push,
     public af: AngularFire,
     public rootPageProvider: RootPageProvider,
@@ -81,8 +81,8 @@ export class MyApp {
      * set the initial rootpage on app start depending on the state.
      * states are: initial opening, logged in, not-logged in
      */
-    if(!platform.is('cordova')){
-      this.initialOpening = false;
+    if(!this.platform.is('cordova')){
+      this.initialOpening = true;
       this.pNsEnabled = true;
     }
     // firebase.auth().onAuthStateChanged((user) => {
@@ -142,11 +142,11 @@ export class MyApp {
     /**
      * cordova platform events triggered on pause and resume
      */
-    platform.pause.subscribe(() => {
+    this.platform.pause.subscribe(() => {
       this.logProvider.logTime("appOpening_count", "appPausing");
       console.log("platform pause triggered");
     });
-    platform.resume.subscribe(() => {
+    this.platform.resume.subscribe(() => {
       this.logProvider.logCounter("appOpening_count").subscribe(() => {
         this.logProvider.logTime("appOpening_count", "appOpening");
       });
@@ -166,7 +166,7 @@ export class MyApp {
      * is only triggered on appCreate.
      * will not be triggered if the app returns from a background state.
      */
-    platform.ready().then(() => {
+    this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();

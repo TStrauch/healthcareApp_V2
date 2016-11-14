@@ -19,12 +19,24 @@ export class QuestionProvider {
 
   constructor(public userProvider: UserProvider) {
 
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      this.pssRef = firebase.database().ref('/pss');
-      this.pssRef = this.pssRef.child(user.uid);
-      this.questionnaireRef = firebase.database().ref('/last_questionnaire/' + user.uid);
-    })
+    // this.userProvider.getCurrentUser().subscribe((user) => {
+    //   this.pssRef = firebase.database().ref('/pss');
+    //   this.pssRef = this.pssRef.child(user.uid);
+    //   this.questionnaireRef = firebase.database().ref('/last_questionnaire/' + user.uid);
+    // })
 
+  }
+
+  setDatabaseRefs(){
+    return Rx.Observable.create((observer) => {
+      this.userProvider.getCurrentUser().subscribe((user) => {
+        this.pssRef = firebase.database().ref('/pss');
+        this.pssRef = this.pssRef.child(user.uid);
+        this.questionnaireRef = firebase.database().ref('/last_questionnaire/' + user.uid);
+
+        observer.next(); observer.complete();
+      })
+    })
   }
 
   getQuestions(category: number): any {
@@ -37,7 +49,6 @@ export class QuestionProvider {
     return Rx.Observable.create((observer) => {
       this.configurationRef = firebase.database().ref('/configuration/');
       this.configurationRef.on('value', (snapshot) => {
-        debugger;
         this.configuration = {
           questionnaire_afterTime: snapshot.val().questionnaire_afterTime,
           questionnaire_afterTraining: snapshot.val().questionnaire_afterTraining
@@ -67,10 +78,12 @@ export class QuestionProvider {
       }
     }
 
-    var pushRef = this.pssRef.push();
-    pushRef.set({
-      "date": moment().toDate().getTime(),
-      "score": pss
+    this.setDatabaseRefs().subscribe(() => {
+      var pushRef = this.pssRef.push();
+      pushRef.set({
+        "date": moment().toDate().getTime(),
+        "score": pss
+      })
     })
   }
 
@@ -79,15 +92,21 @@ export class QuestionProvider {
       // Get configuration, afterTime is the maximum range the last questionnaire should have, and after trainingsCounter
       // the maximum number of trainings until a new questionnaire will be triggered
       this.getConfiguration().subscribe((configuration) => {
-        let lastWeek = moment().subtract(configuration.questionnaire_afterTime, 'days').format();
-        this.questionnaireRef.on('value', (snapshot) => {
-          console.log(snapshot.val() + " " + lastWeek);
-          if (moment(snapshot.val()).isBefore(lastWeek) || (trainingsCounter % configuration.questionnaire_afterTraining === 1)) {
-            observer.next(true);
-          } else {
-            observer.next(false);
-          }
-          observer.complete();
+        this.setDatabaseRefs().subscribe(() => {
+          let lastWeek = moment().subtract(configuration.questionnaire_afterTime, 'days').format();
+          this.questionnaireRef.on('value', (snapshot) => {
+            console.log(snapshot.val() + " " + lastWeek);
+
+            if(!snapshot.val()){
+              observer.next(true);
+            }
+            else if (moment(snapshot.val()).isBefore(lastWeek) || (trainingsCounter % configuration.questionnaire_afterTraining === 1)) {
+              observer.next(true);
+            } else {
+              observer.next(false);
+            }
+            observer.complete();
+          })
         })
       })
     })
@@ -96,13 +115,15 @@ export class QuestionProvider {
   getThisWeeksPSL() {
     //.startAt(moment().subtract(7, 'days').format())
     return Rx.Observable.create((observer) => {
-      let lastWeek = moment().subtract(7, 'days').toDate().getTime();
-      this.pssRef.orderByChild('date').startAt(lastWeek).on('value', (snapshot) => {
-        var results = snapshot.val();
-        if (results == null){
-          results = [];
-        }
-        observer.next(results); observer.complete();
+      this.setDatabaseRefs().subscribe(() => {
+        let lastWeek = moment().subtract(7, 'days').toDate().getTime();
+        this.pssRef.orderByChild('date').startAt(lastWeek).on('value', (snapshot) => {
+          var results = snapshot.val();
+          if (results == null){
+            results = [];
+          }
+          observer.next(results); observer.complete();
+        })
       })
     })
 

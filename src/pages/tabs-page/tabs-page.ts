@@ -29,12 +29,6 @@ export class TabsPage implements RootPage {
     public questionProvider: QuestionProvider,
     public userProvider: UserProvider) {
 
-    this.userProvider.getViewConfiguration().subscribe((data) => {
-     console.log(data);
-     this.profileView = data.showProfileView;
-     this.knowledgeView = data.showKnowledgeView;
-    })
-
 
     this.tab1Root = TrainingPage;
     this.tab2Root = ProfilePage;
@@ -47,14 +41,16 @@ export class TabsPage implements RootPage {
       console.log('Token saved:', t.token);
     });
 
-    //   this.configuration = false;;;
-    //testing calls
-    this.userProvider.getCurrentUser().subscribe((user) => {
-      this.questionProvider.getThisWeeksPSL();
-    })
 
   }
 
+  ionViewWillEnter() {
+    this.userProvider.getViewConfiguration().subscribe((data) => {
+      console.log(data);
+      this.profileView = data.showProfileView;
+      this.knowledgeView = data.showKnowledgeView;
+    })
+  }
 
 
   ionViewDidLoad() {

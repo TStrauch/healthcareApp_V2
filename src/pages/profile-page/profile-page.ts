@@ -90,7 +90,7 @@ export class ProfilePage {
 
   logOut() {
     this.userProvider.logoutUser().then(() => {
-      this.rootPageProvider.setRootPage(LoginPage, { "initial": true }, {});
+      this.rootPageProvider.setRootPage(LoginPage, { "initial": false }, {});
     });
   }
 
@@ -106,7 +106,7 @@ export class ProfilePage {
           this.stress_score = Math.round(sum * 100) / 100;
         }
         else {
-          this.stress_score = "Please do a few more trainings."
+          this.stress_score = null;
         }
 
       });
@@ -140,17 +140,18 @@ export class ProfilePage {
               chartDataAll[(day - startDay)] = dataAllUsers[key].counter / totalUsers ;
             });
 
-            debugger;
-
             let newChartData = [
               { data: chartData, label: "You"},
               { data: chartDataAll, label: "All Users"}];
 
-            this.lineChartData = newChartData;
-
             setTimeout(() => {
               this.lineChartLabels = newLabels;
             }, 0);
+
+            setTimeout(() => {
+              this.lineChartData = newChartData;
+            }, 0);
+
           })
         })
 

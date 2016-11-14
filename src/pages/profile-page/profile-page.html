@@ -38,9 +38,12 @@
 
 <ion-row>
 			<ion-col class="center" width-100>
-				<div class="score">
+				<div *ngIf="stress_score != null" class="score">
 					{{stress_score}}
 				</div>
+        <div *ngIf="stress_score == null " style="font-size: small; color: #888">
+          Please do a few more trainings.
+        </div>
 			</ion-col>
 		</ion-row>
 
