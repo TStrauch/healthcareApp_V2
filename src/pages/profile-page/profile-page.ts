@@ -136,7 +136,6 @@ export class ProfilePage {
 
 
           this.logProvider.getTrainingChartDataWeek().subscribe((data) => {
-          debugger;  
           if(data != null){  
              Object.keys(data).forEach((key) => {
               let day = data[key].day;
