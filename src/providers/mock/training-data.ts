@@ -18,13 +18,13 @@
    pressed in direction of the ground. Repeat and switch the side.', duration: 60, goal:'Relaxation of the neck muscles', image: 'assets/img/training/neck2.PNG'},
    {id:3, name:'Circle your Head', description:'Lean your head forward and slowly roll from side to side.', duration: 60, goal:'Mobilisation of the cervical spine', image: 'assets/img/training/neck3.PNG'},
    {id:4, name:'Incline your Head', description:'Lean your head to the left side and go back to the starting position.\
-    Then switch the side.', duration: 60, goal:'Relaxation of the neck muscles', image: 'assets/img/training/neck4.PNG'},
+    Then switch the side.', duration: 60, goal:'Relaxation of the neck muscles', image: 'assets/img/training/inclineHead.png'},
 
  ];
  var category_two: Exercise[] = [
    {id:1, name:'Circle your Shoulders', description:'Start with circling your shoulders backwards in small movements.\
     Then try to maximise the size of the circles.  After 30 seconds, switch the direction\
-     of the circulation and repeat the movement.', duration: 60, goal:'Mobilisation of the shoulder', image: 'assets/img/training/shoulder1.PNG'},
+     of the circulation and repeat the movement.', duration: 60, goal:'Mobilisation of the shoulder', image: 'assets/img/training/circleShoulders.png'},
    {id:2, name:'Raise your Shoulders', description:'Raise both shoulders at once up toward the ears. \
    Hold, release and drop them. Afterwards repeat the movement.', duration: 60, goal:'Relaxation of the shoulder muscles', image: 'assets/img/training/shoulder2.PNG'},
    {id:3, name:'Stretch  your Shoulders', description:'Create a U-form with your arms, the elbows are at the height of your shoulders. \
