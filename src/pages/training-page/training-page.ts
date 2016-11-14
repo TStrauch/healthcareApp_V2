@@ -34,9 +34,8 @@ export class TrainingPage {
         this.trainingData = trainingSet;
         console.log(this.trainingData);
       });
-
-     
     });
+
 
      /* this.userProvider.getCurrentUser().subscribe((user) => {
          this.trainingProvider.getNewTraining(user.training_count).then((trainingSet) => {
@@ -44,8 +43,9 @@ export class TrainingPage {
            console.log(this.trainingData);
          })
        }); */
-       
+
   }
+
 
   ionViewDidLoad() {
     console.log('Hello TrainingPage Page');
@@ -54,14 +54,26 @@ export class TrainingPage {
   showModal(category) {
 
     this.modal = this.modalCtrl.create(Questionnaire, category);
-    this.modal.present();
+    this.modal.present().then(() => {
+      this.logProvider.getCount("training_count").subscribe((data) => {
+        this.trainingProvider.getNewTraining(data).then((trainingSet) => {
+          this.trainingData = trainingSet;
+          console.log(this.trainingData);
+        });
+      });
+    })
   }
 
   openTrainingModal() {
     this.modal = this.modalCtrl.create(TrainingExercisePage)
-    this.modal.present();
-
- 
+    this.modal.present().then(() => {
+      this.logProvider.getCount("training_count").subscribe((data) => {
+        this.trainingProvider.getNewTraining(data).then((trainingSet) => {
+          this.trainingData = trainingSet;
+          console.log(this.trainingData);
+        });
+      });
+    })
   }
 
 }

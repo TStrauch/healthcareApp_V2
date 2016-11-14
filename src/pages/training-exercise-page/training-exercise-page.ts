@@ -43,6 +43,8 @@ export class TrainingExercisePage {
   clockText;
   cardState;
 
+  timeSeconds = 60;
+
   constructor(public navCtrl: NavController,
     public userProvider: UserProvider,
     public trainingProvider: TrainingProvider,
@@ -55,7 +57,7 @@ export class TrainingExercisePage {
     this.logProvider.getCount("training_count").subscribe((data) => {
       this.trainingProvider.getNewTraining(data).then((trainingSet) => {
         this.buttonText = "Start Exercise";
-        this.counter = 0
+        this.counter = 0;
         this.trainingData = trainingSet;
         this.cardState = 'in';
         this.actualExercise = this.trainingData[this.counter];
@@ -64,7 +66,7 @@ export class TrainingExercisePage {
         // -----------
         //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
         // -----------
-        this.timer = { seconds: 60, remainingTime: 60, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
+        this.timer = { seconds: this.timeSeconds, remainingTime: this.timeSeconds, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
 
         //Count training and set timestamp
         this.logProvider.logCounter("training_count").subscribe(() => {
@@ -165,7 +167,7 @@ export class TrainingExercisePage {
     // -----------
     //set here real time of the exercise this.actualExercise.duration, 5 is for short demo cases
     // -----------
-    this.timer = { seconds: 60, remainingTime: 60, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
+    this.timer = { seconds: this.timeSeconds, remainingTime: this.timeSeconds, runTimer: false, hasStarted: false, hasFinished: false, text: '1:00' };
   }
 
 }
