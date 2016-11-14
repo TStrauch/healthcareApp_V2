@@ -52,7 +52,7 @@ export class ProfilePage {
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgba(148,159,177,0.8)'
     },
-      { // grey
+    { // grey
       backgroundColor: 'rgba(148,159,177,0.2)',
       borderColor: 'rgba(148,159,177,1)',
       pointBackgroundColor: 'rgba(148,159,177,1)',
@@ -111,7 +111,9 @@ export class ProfilePage {
 
       });
 
-      this.logProvider.getTrainingChartDataWeek().subscribe((data) => {
+
+      this.logProvider.getTrainingChartDataAllUsersWeek().subscribe((dataAllUsers) => {
+
 
         //prepare chartData and set the labels
         let newLabels: Array<any> = [];
@@ -124,39 +126,45 @@ export class ProfilePage {
           chartDataAll.push(0);
           newLabels.push(moment().subtract(i, 'days').format('ddd'));
         }
-        this.logProvider.getTrainingChartDataAllUsersWeek().subscribe((dataAllUsers) => {
 
+        this.userProvider.getNumberOfUsers().subscribe((totalUsers) => {
           let startDay = moment().subtract(6, 'days').dayOfYear();
-          Object.keys(data).forEach((key) => {
-            let day = data[key].day;
-            chartData[(day - startDay)] += 1;
+          Object.keys(dataAllUsers).forEach((key) => {
+            let day = dataAllUsers[key].day;
+            chartDataAll[(day - startDay)] = dataAllUsers[key].counter / totalUsers;
           });
 
-          this.userProvider.getNumberOfUsers().subscribe((totalUsers) => {
 
-
-            Object.keys(dataAllUsers).forEach((key) => {
-              let day = dataAllUsers[key].day;
-              chartDataAll[(day - startDay)] = dataAllUsers[key].counter / totalUsers ;
+          this.logProvider.getTrainingChartDataWeek().subscribe((data) => {
+          debugger;  
+          if(data != null){  
+             Object.keys(data).forEach((key) => {
+              let day = data[key].day;
+              chartData[(day - startDay)] += 1;
             });
-
-            let newChartData = [
-              { data: chartData, label: "You"},
-              { data: chartDataAll, label: "All Users"}];
-
-            setTimeout(() => {
-              this.lineChartLabels = newLabels;
-            }, 0);
-
-            setTimeout(() => {
-              this.lineChartData = newChartData;
-            }, 0);
-
-          })
-        })
+            this.setChart(chartData, chartDataAll, newLabels);
+          } else{
+            this.setChart(chartData, chartDataAll, newLabels);
+          }
+          });
 
       })
-    });
-  }
+    })
+  });
+}
+
+setChart(chartData, chartDataAll, newLabels){
+  let newChartData = [
+    { data: chartData, label: "You" },
+    { data: chartDataAll, label: "All Users" }];
+
+  setTimeout(() => {
+    this.lineChartLabels = newLabels;
+  }, 0);
+
+  setTimeout(() => {
+    this.lineChartData = newChartData;
+  }, 0);
+}
 
 }

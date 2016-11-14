@@ -349,7 +349,7 @@ export class UserProvider {
   getNumberOfUsers(): any {
     return Rx.Observable.create((observer) => {
         var userCounterRef = firebase.database().ref('/userProfile/user_count');
-        userCounterRef.on('value', (snapshot) => {
+        userCounterRef.once('value', (snapshot) => {
           observer.next(snapshot.val()); observer.complete();
         })
     });

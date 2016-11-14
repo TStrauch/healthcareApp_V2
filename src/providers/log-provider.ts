@@ -160,6 +160,8 @@ export class LogProvider {
         trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
           observer.next(snapshot.val()); observer.complete();
         })
+      }, (error) =>{
+        observer.next(); observer.complete();
       });
     });
   }
