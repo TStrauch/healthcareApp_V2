@@ -21,21 +21,27 @@ export class LogProvider {
   logCounter(path) {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
+        if(user !== null){
+          this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
+          this.logRef.once('value', (snapshot) => {
 
-        this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
-        this.logRef.once('value', (snapshot) => {
+            var tempName = path;
+            var updateObject = {};
+            updateObject[tempName] = snapshot.val() + 1;
+            this.logRef.parent.update(updateObject).then(() => {
+              observer.next();
+              observer.complete();
+            }, (error) => {
+              observer.error(error);
+              observer.complete();
+            });
+          })
+        }
+        else{
+          observer.error('Log: User not logged in');
+          observer.complete();
+        }
 
-          var tempName = path;
-          var updateObject = {};
-          updateObject[tempName] = snapshot.val() + 1;
-          this.logRef.parent.update(updateObject).then(() => {
-            observer.next();
-            observer.complete();
-          }, (error) => {
-            observer.error(error);
-            observer.complete();
-          });
-        })
       })
     })
   }
@@ -67,7 +73,7 @@ export class LogProvider {
         trainingLogAllUserRef.orderByChild("day").equalTo(today.dayOfYear()).once('value', (snapshot) => {
           var results = snapshot.val();
 
-          // check if a value exists, otherwise just update 
+          // check if a value exists, otherwise just update
           if (results == null) {
             var trainingLogAllUserSaveRef = firebase.database().ref('/trainingLogAllUsers/');
             var trainingAllPushRef = trainingLogAllUserSaveRef.push();

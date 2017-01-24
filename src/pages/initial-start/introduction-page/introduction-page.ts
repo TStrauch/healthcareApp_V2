@@ -29,6 +29,7 @@ export class IntroductionPage {
 
     if (this.platform.is('cordova')){
       this.push.register().then((t: PushToken) => {
+        console.log('Intro: push registered. token is '+t);
         return this.push.saveToken(t);
       }).then((t: PushToken) => {
         console.log('Token saved:', t.token);

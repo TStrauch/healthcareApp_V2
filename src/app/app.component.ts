@@ -49,118 +49,7 @@ export class MyApp {
     firebase.initializeApp(firebaseconfig);
 
 
-    /**
-     * handle any rootpage changes centrally here
-     */
-    rootPageProvider.getRootPageStream().subscribe((navData) => {
-      let newRootPage = navData.rootPage;
-      let navParams = navData.navParams;
-      let navOpt = navData.navOpt;
 
-      //gets executed when user comes form introduction screen via login. then the initial questionnaire is not executed.
-      if(navParams.initialOpening){
-        NativeStorage.setItem('initialOpening', {value: false}).then(data => {
-          console.log("initial opening set: "+data);
-          this.initialOpening = false;
-          this.nav.setRoot(newRootPage, navParams, navOpt);
-        }, error => {
-          console.error(error);
-          this.nav.setRoot(newRootPage, navParams, navOpt);
-        });
-      }
-      else{
-        this.nav.setRoot(newRootPage, navParams, navOpt);
-      }
-    })
-
-    /**
-     * call local storage to set initialOpening to true / false
-     * @type {boolean}
-     */
-    /**
-     * set the initial rootpage on app start depending on the state.
-     * states are: initial opening, logged in, not-logged in
-     */
-    if(!this.platform.is('cordova')){
-      this.initialOpening = true;
-      this.pNsEnabled = true;
-    }
-    // firebase.auth().onAuthStateChanged((user) => {
-    this.userProvider.getCurrentUser().subscribe((user) => {
-
-      NativeStorage.getItem('initialOpening').then(data => {
-        console.log("initial opening retrieved: "+data);
-        this.initialOpening = data.value;
-      }, error => {
-        console.log("initial opening could not be retrieved!!")
-        console.error(error);
-      }).then(() => {
-        PushNotification.hasPermission().then((data) => {
-          console.log("[App.Component] Push Notifications enabled: "+data.isEnabled);
-          if (data.isEnabled){
-            this.pNsEnabled = true;
-          }
-          else{
-            this.pNsEnabled = false;
-          }
-        }, error => {console.log('error')}).then(() => {
-          console.log("[App.Component] Initial: "+this.initialOpening+"; PNs enabled: "+this.pNsEnabled);
-          if (user && !this.initialOpening && this.pNsEnabled) {
-            this.rootPageProvider.setRootPage(TabsPage, {}, {});
-          } else if(this.initialOpening || !this.pNsEnabled) {
-            this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-          } else{
-            this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
-          }
-        });
-      });
-    });
-
-
-
-    /**
-     * logic what to do when a new push notification is received.
-     * --> open a new modal and display the text and picture
-     */
-    this.push.rx.notification()
-      .subscribe((msg) => {
-        //{"raw":{"message":"Get 150% off!","title":"Test Push","additionalData":
-        // {"payload":{"key":"pushValue"},"foreground":true,"coldstart":false}},
-        // "text":"Get 150% off!","title":"Test Push","app":{"asleep":false,"closed":false},
-        // "payload":{"key":"pushValue"}}
-        //access the payload:
-        //msg.payload.key
-        let payload: any = msg.payload;
-        this.modal = this.modalCtrl.create(AppealPage, { text: msg.text, title: msg.title, url: payload.url });
-        this.modal.present();
-
-        console.log("received push");
-        //alert(msg.title + ': ' + msg.text);
-      });
-
-
-    /**
-     * cordova platform events triggered on pause and resume
-     */
-    this.platform.pause.subscribe(() => {
-      this.logProvider.logTime("appOpening_count", "appPausing");
-      console.log("platform pause triggered");
-    });
-    this.platform.resume.subscribe(() => {
-      this.logProvider.logCounter("appOpening_count").subscribe(() => {
-        this.logProvider.logTime("appOpening_count", "appOpening");
-      });
-      console.log("platform resume triggered");
-
-      PushNotification.hasPermission().then((data) => {
-        if (data.isEnabled) {
-          //
-        }
-        else{
-          this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
-        }
-      });
-    });
 
     /**
      * is only triggered on appCreate.
@@ -171,9 +60,128 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
 
+      /**
+       * handle any rootpage changes centrally here
+       */
+      rootPageProvider.getRootPageStream().subscribe((navData) => {
+        let newRootPage = navData.rootPage;
+        let navParams = navData.navParams;
+        let navOpt = navData.navOpt;
+
+        //gets executed when user comes form introduction screen via login. then the initial questionnaire is not executed.
+        if(navParams.initialOpening){
+          NativeStorage.setItem('initialOpening', {value: false}).then(data => {
+            console.log("initial opening set: "+data);
+            this.initialOpening = false;
+            this.nav.setRoot(newRootPage, navParams, navOpt);
+          }, error => {
+            console.error(error);
+            this.nav.setRoot(newRootPage, navParams, navOpt);
+          });
+        }
+        else{
+          this.nav.setRoot(newRootPage, navParams, navOpt);
+        }
+      })
+
+      /**
+       * call local storage to set initialOpening to true / false
+       * @type {boolean}
+       */
+      /**
+       * set the initial rootpage on app start depending on the state.
+       * states are: initial opening, logged in, not-logged in
+       */
+      if(!this.platform.is('cordova')){
+        this.initialOpening = true;
+        this.pNsEnabled = true;
+        console.log("Platform is not cordova");
+      }
+      // firebase.auth().onAuthStateChanged((user) => {
+      this.userProvider.getCurrentUser().subscribe((user) => {
+
+        NativeStorage.getItem('initialOpening').then(data => {
+          console.log("initial opening retrieved: "+data);
+          this.initialOpening = data.value;
+        }, error => {
+          console.log("initial opening could not be retrieved!!")
+          console.error(error);
+        }).then(() => {
+          PushNotification.hasPermission().then((data) => {
+            console.log("[App.Component] Push Notifications enabled: "+data.isEnabled);
+            if (data.isEnabled){
+              this.pNsEnabled = true;
+            }
+            else{
+              this.pNsEnabled = false;
+            }
+          }, error => {console.log('App.component: Push Notifications could not be checked')}).then(() => {
+            console.log("[App.Component] Initial: "+this.initialOpening+"; PNs enabled: "+this.pNsEnabled);
+            if (user && !this.initialOpening && this.pNsEnabled) {
+              this.rootPageProvider.setRootPage(TabsPage, {}, {});
+            } else if(this.initialOpening || !this.pNsEnabled) {
+              this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+            } else{
+              this.rootPageProvider.setRootPage(LoginPage, {"initial": true}, {});
+            }
+          });
+        });
+      });
+
+
+
+      /**
+       * logic what to do when a new push notification is received.
+       * --> open a new modal and display the text and picture
+       */
+      this.push.rx.notification()
+        .subscribe((msg) => {
+          console.log("received push");
+          //{"raw":{"message":"Get 150% off!","title":"Test Push","additionalData":
+          // {"payload":{"key":"pushValue"},"foreground":true,"coldstart":false}},
+          // "text":"Get 150% off!","title":"Test Push","app":{"asleep":false,"closed":false},
+          // "payload":{"key":"pushValue"}}
+          //access the payload:
+          //msg.payload.key
+          let payload: any = msg.payload;
+          this.modal = this.modalCtrl.create(AppealPage, { text: msg.text, title: msg.title, url: payload.url });
+          this.modal.present();
+
+          //alert(msg.title + ': ' + msg.text);
+        });
+
+
+      /**
+       * cordova platform events triggered on pause and resume
+       */
+      this.platform.pause.subscribe(() => {
+        this.logProvider.logTime("appOpening_count", "appPausing");
+        console.log("platform pause triggered");
+      });
+      this.platform.resume.subscribe(() => {
+        this.logProvider.logCounter("appOpening_count").subscribe(() => {
+          this.logProvider.logTime("appOpening_count", "appOpening");
+        }, (error) => {
+          debugger;
+          console.log(error);
+        });
+        console.log("platform resume triggered");
+
+        PushNotification.hasPermission().then((data) => {
+          if (data.isEnabled) {
+            //
+          }
+          else{
+            this.rootPageProvider.setRootPage(IntroductionPage, {}, {});
+          }
+        });
+      });
+
       //gets only executed when "resume" is not fired.
       this.logProvider.logCounter("appOpening_count").subscribe(() => {
         this.logProvider.logTime("appOpening_count", "appOpening");
+      }, (error) => {
+        console.log(error);
       });
     });
   }

@@ -80,7 +80,8 @@ export class UserProvider {
     else {
       return Rx.Observable.create((observer) => {
         this.fireAuth.onAuthStateChanged((user) => {
-          if (user) {
+          console.log("User-provider: getCurrentUser");
+          if (user !== null) {
             var userRef = firebase.database().ref('userProfile/' + user.uid);
             userRef.on('value', (snapshot) => {
               var tempUser = snapshot.val();

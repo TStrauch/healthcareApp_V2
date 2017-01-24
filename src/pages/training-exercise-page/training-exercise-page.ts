@@ -43,7 +43,7 @@ export class TrainingExercisePage {
   clockText;
   cardState;
 
-  timeSeconds = 60;
+  timeSeconds = 1;
 
   constructor(public navCtrl: NavController,
     public userProvider: UserProvider,

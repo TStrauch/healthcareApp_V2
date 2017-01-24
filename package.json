@@ -31,7 +31,7 @@
     "ionic_rollup": "./scripts/rollup.config.js"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "latest",
+    "@ionic/app-scripts": "^1.0.0",
     "typescript": "^2.0.3"
   },
   "cordovaPlugins": [
