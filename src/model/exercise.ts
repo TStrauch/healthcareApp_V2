@@ -6,6 +6,7 @@ export class Exercise {
         public description?: string,
         public duration?: number,
         public goal?: string,
+        public effect?: string,
         public image?: string
     ) { };
 }

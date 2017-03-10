@@ -38,7 +38,7 @@ export class IntroductionPage {
     }
     else{
       let loginDoneNavOptions = {
-        "pageSignup": InitialQuestionnaire,
+        "pageSignup": TabsPage,
         "pageLogin" : TabsPage,
         "navParamsSignup" : {},
         "navParamsLogin" : {initialOpening: true},
@@ -59,9 +59,21 @@ export class IntroductionPage {
      * initialized as well in order to get access to the object that fires the event
      */
 
+    //healthcareApp key --> update to worklax-project
+    // let pushNotification = PushNotification.init({
+    //   android: {
+    //     senderID: "157850107630"
+    //   },
+    //   ios: {
+    //     alert: "true",
+    //     badge: true,
+    //     sound: 'false'
+    //   },
+    //   windows: {}
+    // });
     let pushNotification = PushNotification.init({
       android: {
-        senderID: "157850107630"
+        senderID: "808633843882"
       },
       ios: {
         alert: "true",
@@ -89,7 +101,7 @@ export class IntroductionPage {
         if (data.isEnabled) {
           console.log('[Cordova plugin] Push is Enabled');
           let loginDoneNavOptions = {
-            "pageSignup": InitialQuestionnaire,
+            "pageSignup": TabsPage,
             "pageLogin" : TabsPage,
             "navParamsSignup" : {},
             "navParamsLogin" : {initialOpening: true},

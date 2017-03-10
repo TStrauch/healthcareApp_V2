@@ -41,4 +41,15 @@
 			<h2>{{exercise.name}}</h2>
 		</button>
 	</ion-list>
+  <ion-list>
+    <ion-list-header>
+      Mixed Exercises
+    </ion-list-header>
+    <button ion-item *ngFor="let exercise of exercisesBody; let i = index;" (click)="exerciseSelected(4,i)">
+      <ion-avatar item-left>
+        <img [src]="exercise.image">
+      </ion-avatar>
+      <h2>{{exercise.name}}</h2>
+    </button>
+  </ion-list>
 </ion-content>

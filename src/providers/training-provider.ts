@@ -23,17 +23,39 @@ export class TrainingProvider {
   }
 
   getNewTraining(index: number): any{
-    let max = TRAINING_DAT.count_per_category;
+    let trainingExercises = [
+      TRAINING_DAT.category_one,
+      TRAINING_DAT.category_two,
+      TRAINING_DAT.category_three,
+      TRAINING_DAT.category_four
+    ]
 
-    let e1 = TRAINING_DAT.category_one[index % max];
-    let e2 = TRAINING_DAT.category_two[index % max];
-    let e3 = TRAINING_DAT.category_three[index % max];
+    let numCategories = TRAINING_DAT.count_categories;
+    let numExercisesInTraining = 3;
 
-    let trainingSet = [
-      e1,
-      e2,
-      e3
-    ];
+    //determine which categories to use
+    let startingCategory = index % numCategories;
+
+    //setting the appropriate exercises
+    let trainingSet = [];
+    for (var i=startingCategory; i < startingCategory + numExercisesInTraining; i++){
+      let categoryIndex = i % trainingExercises.length;
+      let exerciseIndex = index % trainingExercises[categoryIndex].length
+      trainingSet.push(trainingExercises[categoryIndex][exerciseIndex]);
+    }
+
+
+    //determine which exercises to use
+
+    // let e1 = TRAINING_DAT.category_one[index % max];
+    // let e2 = TRAINING_DAT.category_two[index % max];
+    // let e3 = TRAINING_DAT.category_three[index % max];
+
+    // let trainingSet = [
+    //   e1,
+    //   e2,
+    //   e3
+    // ];
 
     return Promise.resolve(trainingSet);
   }

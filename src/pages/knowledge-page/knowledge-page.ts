@@ -18,6 +18,7 @@ export class KnowledgePage {
   exercisesNeck: Exercise[];
   exercisesShoulder: Exercise[];
   exercisesEye: Exercise[];
+  exercisesBody: Exercise[];
   detailExercise: Exercise;
   modalKnowledgeDetail: any;
 
@@ -30,6 +31,7 @@ export class KnowledgePage {
       this.exercisesNeck = data.category_one;
       this.exercisesShoulder = data.category_two;
       this.exercisesEye = data.category_three;
+      this.exercisesBody = data.category_four;
     });
   }
 
@@ -53,8 +55,10 @@ export class KnowledgePage {
       this.detailExercise = this.exercisesNeck[index];
     } else if (category == 2) {
       this.detailExercise = this.exercisesShoulder[index];
-    } else {
+    } else if (category == 3) {
       this.detailExercise = this.exercisesEye[index];
+    } else if (category == 4) {
+      this.detailExercise = this.exercisesBody[index];
     }
     this.navCtrl.push(KnowledgeDetailPage, {
       exercise: this.detailExercise,

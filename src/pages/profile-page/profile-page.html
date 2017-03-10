@@ -8,11 +8,11 @@
 
 	<ion-navbar>
 		<ion-title>Profile</ion-title>
-		<ion-buttons end>
-			<button ion-button icon-only (click)="logOut()">
-        <ion-icon name="log-out"></ion-icon>
-      </button>
-		</ion-buttons>
+		<!--<ion-buttons end>-->
+			<!--<button ion-button icon-only (click)="logOut()">-->
+        <!--<ion-icon name="log-out"></ion-icon>-->
+      <!--</button>-->
+		<!--</ion-buttons>-->
 	</ion-navbar>
 
 </ion-header>
@@ -20,13 +20,13 @@
 
 <ion-content padding>
 	<ion-grid>
-		<ion-row>
-			<ion-col class="center" width-100>
-				<div *ngIf="user">
-					<h2>Hey Dude!</h2>
-				</div>
-			</ion-col>
-		</ion-row>
+		<!--<ion-row>-->
+			<!--<ion-col class="center" width-100>-->
+				<!--<div *ngIf="user">-->
+					<!--<h2>Hey Dude!</h2>-->
+				<!--</div>-->
+			<!--</ion-col>-->
+		<!--</ion-row>-->
 		<ion-row>
 			<ion-col width-100>
 				<div>
@@ -43,6 +43,9 @@
 				</div>
         <div *ngIf="stress_score == null " style="font-size: small; color: #888">
           Please do a few more trainings.
+        </div>
+        <div style="margin-top:12px; color: #666;">
+          A stress-level of around 14 is considered normal, whereas a lower level means less perceived stress
         </div>
 			</ion-col>
 		</ion-row>

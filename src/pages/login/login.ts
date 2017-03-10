@@ -42,8 +42,11 @@ export class LoginPage implements RootPage{
     //   password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
     // });
     //read nav Params
-    if(navParams.get("initial")){
+    if(navParams.get("initial") != null){
       this.isInitialView = navParams.get("initial");
+    }
+    else{
+      this.isInitialView = false;
     }
     if(navParams.get("loginDoneNavOptions")){
       this.loginDoneNavOptions = navParams.get("loginDoneNavOptions");

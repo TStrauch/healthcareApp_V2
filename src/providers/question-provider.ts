@@ -30,9 +30,9 @@ export class QuestionProvider {
   setDatabaseRefs(){
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
-        this.pssRef = firebase.database().ref('/pss');
+        this.pssRef = firebase.database().ref(user.data_path + '/pss');
         this.pssRef = this.pssRef.child(user.uid);
-        this.questionnaireRef = firebase.database().ref('/last_questionnaire/' + user.uid);
+        this.questionnaireRef = firebase.database().ref(user.data_path + '/last_questionnaire/' + user.uid);
 
         observer.next(); observer.complete();
       })
@@ -47,17 +47,19 @@ export class QuestionProvider {
 
   getConfiguration() {
     return Rx.Observable.create((observer) => {
-      this.configurationRef = firebase.database().ref('/configuration/');
-      this.configurationRef.on('value', (snapshot) => {
-        this.configuration = {
-          questionnaire_afterTime: snapshot.val().questionnaire_afterTime,
-          questionnaire_afterTraining: snapshot.val().questionnaire_afterTraining
-        };
-        debugger;
-        observer.next(this.configuration);
-        observer.complete();
-      })
-    })
+      this.userProvider.getCurrentUser().subscribe((user) => {
+        this.configurationRef = firebase.database().ref(user.data_path + '/configuration/');
+        this.configurationRef.on('value', (snapshot) => {
+          this.configuration = {
+            questionnaire_afterTime: snapshot.val().questionnaire_afterTime,
+            questionnaire_afterTraining: snapshot.val().questionnaire_afterTraining
+          };
+          debugger;
+          observer.next(this.configuration);
+          observer.complete();
+        });
+      });
+    });
   }
 
   savePSS(data: any) {

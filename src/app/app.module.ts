@@ -32,12 +32,31 @@ import {InitialQuestionnaire} from "../pages/initial-start/initial-questionnaire
 
 // Import additional libraries
 
+
+//healthcareApp project settings (not worklax-project)
+// const cloudSettings: CloudSettings = {
+//   'core': {
+//     'app_id': '211fde7e'
+//   },
+//   'push': {
+//     'sender_id': '157850107630',
+//     'pluginConfig': {
+//       'ios': {
+//         'badge': true,
+//         'sound': true
+//       },
+//       'android': {
+//         'iconColor': '#343434'
+//       }
+//     }
+//   }
+// };
 const cloudSettings: CloudSettings = {
   'core': {
     'app_id': '211fde7e'
   },
   'push': {
-    'sender_id': '157850107630',
+    'sender_id': '808633843882',
     'pluginConfig': {
       'ios': {
         'badge': true,
@@ -50,12 +69,19 @@ const cloudSettings: CloudSettings = {
   }
 };
 
+// export const firebaseconfig = {
+//   apiKey: "AIzaSyA8FuVvYO2pwraBAQW8tQrvV_5T66xm1as",
+//    authDomain: "healthcareapp-18fe6.firebaseapp.com",
+//    databaseURL: "https://healthcareapp-18fe6.firebaseio.com",
+//   storageBucket: "",
+//   messagingSenderId: "876282683428"
+// };
 export const firebaseconfig = {
-  apiKey: "AIzaSyA8FuVvYO2pwraBAQW8tQrvV_5T66xm1as",
-   authDomain: "healthcareapp-18fe6.firebaseapp.com",
-   databaseURL: "https://healthcareapp-18fe6.firebaseio.com",
-  storageBucket: "",
-  messagingSenderId: "876282683428"
+  apiKey: "AIzaSyCREzuQQNzNrcWRidRrpX1ZB8A38RvFxkk",
+  authDomain: "worklax-c8a7c.firebaseapp.com",
+  databaseURL: "https://worklax-c8a7c.firebaseio.com",
+  storageBucket: "worklax-c8a7c.appspot.com",
+  messagingSenderId: "808633843882"
 };
 
 const myFirebaseAuthConfig = {

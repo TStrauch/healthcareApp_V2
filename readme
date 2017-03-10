@@ -1,0 +1,5 @@
+refer to https://ionicframework.com/docs/guide/publishing.html for publishing (app building, signing, uploading)
+
+run ./makeAndroid.sh to build Android apk
+keystore password: Android_1992
+

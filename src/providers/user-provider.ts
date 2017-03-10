@@ -39,7 +39,6 @@ export class UserProvider {
 
     this.fireAuth = firebase.auth();
     this.userProfile = firebase.database().ref('/userProfile');
-    this.experimentGroupRef = firebase.database().ref('/experiment_groups');
   }
 
 
@@ -53,9 +52,9 @@ export class UserProvider {
     else {
       return Rx.Observable.create((observer) => {
         this.getCurrentUser().subscribe((user) => {
-          var configKnowledgeRef = firebase.database().ref('experiment_groups/' + user.experiment_group_id + '/show_knowledgeview');
+          var configKnowledgeRef = firebase.database().ref(user.data_path + '/experiment_groups/' + user.experiment_group_id + '/show_knowledgeview');
           configKnowledgeRef.on('value', (knowledgeView) => {
-            var configProfilRef = firebase.database().ref('experiment_groups/' + user.experiment_group_id + '/show_profileview');
+            var configProfilRef = firebase.database().ref(user.data_path + '/experiment_groups/' + user.experiment_group_id + '/show_profileview');
             configProfilRef.on('value', (profileView) => {
               this.configuration = {
                 showKnowledgeView: knowledgeView.val(),
@@ -82,12 +81,12 @@ export class UserProvider {
         this.fireAuth.onAuthStateChanged((user) => {
           console.log("User-provider: getCurrentUser");
           if (user !== null) {
-            var userRef = firebase.database().ref('userProfile/' + user.uid);
+            var userRef = firebase.database().ref('userProfile/' + this.__encodeDotsInString(user.email));
             userRef.on('value', (snapshot) => {
               var tempUser = snapshot.val();
               // tempUser.uid = user.uid;
               this.user = tempUser;
-              this.user.uid = user.uid;
+              this.user.uid = this.__encodeDotsInString(user.email);
               observer.next(this.user)
               observer.complete();
             });
@@ -194,7 +193,7 @@ export class UserProvider {
     this.fireAuth.createUserWithEmailAndPassword(email, password).then((newUser) => {
 
       //determine which experiment group the user should be assigned to
-      this.assignExperimentGroup(newUser.uid).subscribe((groupid) => {
+      this.assignExperimentGroup(this.__encodeDotsInString(newUser.email)).subscribe((groupid) => {
 
         //now create the ionic user
         let details: UserDetails = { 'email': email, 'password': password, 'custom': { "experimentgroup": groupid } };
@@ -205,33 +204,37 @@ export class UserProvider {
           this.loginUser(email, password).subscribe((user) => {
 
             let detailsAny: any = details;
+            firebase.database().ref("/current_db_path").once('value', (snapshot) => {
+              let dataPath = snapshot.val();
 
-            this.userProfile.child(newUser.uid).set({
-              email: email,
-              training_count: 0,
-              experiment_group_id: detailsAny.custom.experimentgroup,
-              ionic_uuid: this.ionicUser.id
+              this.userProfile.child(this.__encodeDotsInString(newUser.email)).set({
+                email: email,
+                data_path: dataPath,
+                training_count: 0,
+                experiment_group_id: detailsAny.custom.experimentgroup,
+                ionic_uuid: this.ionicUser.id
+              });
+
+              // set all counters, which are required for logging data
+              this.logRef = firebase.database().ref(dataPath + 'dataLog/' + this.__encodeDotsInString(newUser.email)); //change here to encoded email address
+              this.logRef.set({
+                profilePage_count: 0,
+                knowledgePage_count: 0,
+                training_count: 0,
+                appOpening_count: 0,
+                questionnaire_count: 0,
+                appealPage_count: 0
+              });
+
+              // count all users
+              this.userProfile.child('user_count').transaction(function (counter) {
+                return counter + 1;
+              })
+
+              // Add data logo elements
+              returnObserver.next();
+              returnObserver.complete();
             });
-
-            // set all counters, which are required for logging data
-            this.logRef = firebase.database().ref('dataLog/' + newUser.uid);
-            this.logRef.set({
-              profilePage_count: 0,
-              knowledgePage_count: 0,
-              training_count: 0,
-              appOpening_count: 0,
-              questionnaire_count: 0,
-              appealPage_count: 0
-            });
-
-            // count all users
-            this.userProfile.child('user_count').transaction(function (counter) {
-              return counter + 1;
-            })
-
-            // Add data logo elements
-            returnObserver.next();
-            returnObserver.complete();
           });
 
         }, (error) => {
@@ -247,10 +250,12 @@ export class UserProvider {
     return returnStream;
   }
 
-  assignExperimentGroup(userid: string): any {
+  assignExperimentGroup(user: any): any {
+    let userid = user.uid;
     return Rx.Observable.create((observer) => {
 
-      this.experimentGroupRef.once('value', (snapshot) => {
+      let experimentGroupRef = firebase.database().ref(user.data_path + '/experiment_groups');
+      experimentGroupRef.once('value', (snapshot) => {
 
         let groups = snapshot.val();
 
@@ -271,7 +276,7 @@ export class UserProvider {
           }
         });
 
-        let groupMemberRef = firebase.database().ref('/experiment_groups/' + smallestGroupId + "/members").push();
+        let groupMemberRef = firebase.database().ref(user.data_path + '/experiment_groups/' + smallestGroupId + "/members").push();
         groupMemberRef.set({
           "uid": userid
         });
@@ -296,11 +301,16 @@ export class UserProvider {
   __onlyFirebaseSignup(email: string, password: string): any {
     return this.fireAuth.createUserWithEmailAndPassword(email, password)
       .then((newUser) => {
-        this.userProfile.child(newUser.uid).set({
-          email: email,
-          training_count: 0,
-          experiment_group_id: "Experiment_id_placeholder"
+        firebase.database().ref("/current_db_path").once('value', (snapshot) => {
+          let dataPath = snapshot.val();
+          this.userProfile.child(this.__encodeDotsInString(email)).set({
+            email: email,
+            data_path: dataPath,
+            training_count: 0,
+            experiment_group_id: "Experiment_id_placeholder"
+          });
         });
+
       });
   }
 
@@ -345,6 +355,10 @@ export class UserProvider {
         observer.complete();
       });
     })
+  }
+
+  __encodeDotsInString(word: string): string{
+    return word.replace(/\./g, '%2E');
   }
 
   getNumberOfUsers(): any {

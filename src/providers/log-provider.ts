@@ -22,7 +22,7 @@ export class LogProvider {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
         if(user !== null){
-          this.logRef = firebase.database().ref('dataLog/' + user.uid + '/' + path);
+          this.logRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + '/' + path);
           this.logRef.once('value', (snapshot) => {
 
             var tempName = path;
@@ -49,7 +49,7 @@ export class LogProvider {
   logTraining(path) {
     this.userProvider.getCurrentUser().subscribe((user) => {
 
-      this.logRef = firebase.database().ref('dataLog/' + user.uid + "/training_count");
+      this.logRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + "/training_count");
       this.logRef.once('value', (snapshot) => {
         var tempName = "training_" + snapshot.val() + "_" + path;
         var updateObject = {};
@@ -59,7 +59,7 @@ export class LogProvider {
 
       //log training finished to the application-used log area
       if (path == 'end') {
-        var trainingLogRef = firebase.database().ref('/trainingLog/' + user.uid);
+        var trainingLogRef = firebase.database().ref(user.data_path + '/trainingLog/' + user.uid);
         var trainingPushRef = trainingLogRef.push();
         var today = moment();
         trainingPushRef.set({
@@ -68,14 +68,13 @@ export class LogProvider {
           "month": today.month()
         });
 
-
-        var trainingLogAllUserRef = firebase.database().ref('/trainingLogAllUsers');
+        var trainingLogAllUserRef = firebase.database().ref(user.data_path + '/trainingLogAllUsers');
         trainingLogAllUserRef.orderByChild("day").equalTo(today.dayOfYear()).once('value', (snapshot) => {
           var results = snapshot.val();
 
           // check if a value exists, otherwise just update
           if (results == null) {
-            var trainingLogAllUserSaveRef = firebase.database().ref('/trainingLogAllUsers/');
+            var trainingLogAllUserSaveRef = firebase.database().ref(user.data_path + '/trainingLogAllUsers/');
             var trainingAllPushRef = trainingLogAllUserSaveRef.push();
             trainingAllPushRef.set({
               "date": today.toDate().getTime(),
@@ -88,7 +87,7 @@ export class LogProvider {
             console.log(results.key);
             snapshot.forEach(function (singleObject) {
               // need to check year if the year fits...
-              var trainingLogAllUserUpdateRef = firebase.database().ref('/trainingLogAllUsers/' + singleObject.key);
+              var trainingLogAllUserUpdateRef = firebase.database().ref(user.data_path + '/trainingLogAllUsers/' + singleObject.key);
               trainingLogAllUserUpdateRef.child('counter').transaction(function (counter) {
                 return counter + 1;
               })
@@ -105,7 +104,7 @@ export class LogProvider {
   logQuestion(questionId, questionAnswer): any {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
-        this.logRef = firebase.database().ref('dataLog/' + user.uid + "/questionnaire_count");
+        this.logRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + "/questionnaire_count");
         this.logRef.once('value', (snapshot) => {
           var tempName = "questionnaire_" + snapshot.val() + "_" + questionId;
           var updateObject = {};
@@ -123,7 +122,7 @@ export class LogProvider {
   logTime(path, name) {
     var time = new Date().getTime();
     this.userProvider.getCurrentUser().subscribe((user) => {
-      this.logRef = firebase.database().ref('dataLog/' + user.uid + "/" + path);
+      this.logRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + "/" + path);
       this.logRef.once('value', (snapshot) => {
         var tempName = name + "_" + snapshot.val() + "_time";
         var updateObject = {};
@@ -137,7 +136,7 @@ export class LogProvider {
   getCount(path): any {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
-        var userRef = firebase.database().ref('dataLog/' + user.uid + "/" + path);
+        var userRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + "/" + path);
         userRef.on('value', (snapshot) => {
           observer.next(snapshot.val())
           observer.complete();
@@ -150,7 +149,7 @@ export class LogProvider {
 
   logLastQuestionnaire() {
     this.userProvider.getCurrentUser().subscribe((user) => {
-      this.logRef = firebase.database().ref('/last_questionnaire/');
+      this.logRef = firebase.database().ref(user.data_path + '/last_questionnaire/');
       var tempName = user.uid;
       var updateObject = {};
       updateObject[tempName] = moment().format();
@@ -161,7 +160,7 @@ export class LogProvider {
   getTrainingChartDataWeek(): any {
     return Rx.Observable.create((observer) => {
       this.userProvider.getCurrentUser().subscribe((user) => {
-        let trainingRef = firebase.database().ref('/trainingLog/' + user.uid);
+        let trainingRef = firebase.database().ref(user.data_path + '/trainingLog/' + user.uid);
         let lastWeek = moment().subtract(7, 'days').dayOfYear();
         trainingRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
           observer.next(snapshot.val()); observer.complete();
@@ -174,11 +173,14 @@ export class LogProvider {
 
   getTrainingChartDataAllUsersWeek(): any {
     return Rx.Observable.create((observer) => {
-        let trainingAllRef = firebase.database().ref('/trainingLogAllUsers');
+      this.userProvider.getCurrentUser().subscribe((user) => {
+        let trainingAllRef = firebase.database().ref(user.data_path + '/trainingLogAllUsers');
         let lastWeek = moment().subtract(7, 'days').dayOfYear();
         trainingAllRef.orderByChild('day').startAt(lastWeek).on('value', (snapshot) => {
-          observer.next(snapshot.val()); observer.complete();
-        })
+          observer.next(snapshot.val());
+          observer.complete();
+        });
+      });
     });
   }
 }
