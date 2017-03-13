@@ -60,20 +60,9 @@ export class IntroductionPage {
      */
 
     //healthcareApp key --> update to worklax-project
-    // let pushNotification = PushNotification.init({
-    //   android: {
-    //     senderID: "157850107630"
-    //   },
-    //   ios: {
-    //     alert: "true",
-    //     badge: true,
-    //     sound: 'false'
-    //   },
-    //   windows: {}
-    // });
     let pushNotification = PushNotification.init({
       android: {
-        senderID: "808633843882"
+        senderID: "157850107630"
       },
       ios: {
         alert: "true",
@@ -82,6 +71,17 @@ export class IntroductionPage {
       },
       windows: {}
     });
+    // let pushNotification = PushNotification.init({
+    //   android: {
+    //     senderID: "808633843882"
+    //   },
+    //   ios: {
+    //     alert: "true",
+    //     badge: true,
+    //     sound: 'false'
+    //   },
+    //   windows: {}
+    // });
 
     /**
      * the "registration" event is the event fired by the phonegap-plugin-push when the
