@@ -23,12 +23,15 @@ export class AppealPage {
               public logProvider: LogProvider) {
 
     this.url = params.get("url");
-    this.title = params.get("title");
+    if(this.url === '' || this.url === undefined){
+      this.url = null;
+    }
+    this.title = params.get("title")
     this.text = params.get("text");
 
     this.logProvider.logCounter("appealPage_count").subscribe(() => {
-          this.logProvider.logTime("appealPage_count", "appealOpening");
-        });
+      this.logProvider.logTime("appealPage_count", "appealOpening");
+    });
 
   }
 

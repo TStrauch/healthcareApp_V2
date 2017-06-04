@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import {Platform, ModalController, NavController} from 'ionic-angular';
 import { StatusBar, NativeStorage, Push as PushNotification } from 'ionic-native';
+import { Http, RequestOptions, Request, RequestMethod, Headers } from '@angular/http';
 
 import { LoginPage } from '../pages/login/login';
 import {IntroductionPage} from '../pages/initial-start/introduction-page/introduction-page';
@@ -30,6 +31,8 @@ export class MyApp {
   initialOpening = true;
   pNsEnabled = false;
 
+  private readonly IONIC_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MDg0YzM4OS0zNGMxLTQxNTYtYTExMS01MGM4ZmYxMDMxMGUifQ.dQE35KrPq7WJS6hA075eP3vlc-3y7io9VxGBgYpJnU4';
+
   ngAfterViewInit() {
 
   }
@@ -40,7 +43,8 @@ export class MyApp {
     public rootPageProvider: RootPageProvider,
     public modalCtrl: ModalController,
     public userProvider: UserProvider,
-    public logProvider: LogProvider) {
+    public logProvider: LogProvider,
+              public http: Http) {
 
 
     /**
@@ -59,6 +63,10 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
+
+
+
+
 
       /**
        * handle any rootpage changes centrally here
@@ -144,6 +152,12 @@ export class MyApp {
           //access the payload:
           //msg.payload.key
           let payload: any = msg.payload;
+          if(!payload){
+            payload = {};
+          }
+          if(!payload.url){
+            payload.url = '';
+          }
           this.modal = this.modalCtrl.create(AppealPage, { text: msg.text, title: msg.title, url: payload.url });
           this.modal.present();
 
@@ -185,8 +199,5 @@ export class MyApp {
       });
     });
   }
-
-
-
 
 }

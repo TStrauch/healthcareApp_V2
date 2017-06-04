@@ -13,6 +13,7 @@ import * as Rx from 'rxjs';
 @Injectable()
 export class QuestionProvider {
   private pssRef: any;
+  logQuestionnaireRef: any;
   questionnaireRef: any;
   configurationRef: any;
   configuration;
@@ -33,6 +34,7 @@ export class QuestionProvider {
         this.pssRef = firebase.database().ref(user.data_path + '/pss');
         this.pssRef = this.pssRef.child(user.uid);
         this.questionnaireRef = firebase.database().ref(user.data_path + '/last_questionnaire/' + user.uid);
+        this.logQuestionnaireRef = firebase.database().ref(user.data_path + '/dataLog/' + user.uid + "/questionnaire_count");
 
         observer.next(); observer.complete();
       })
@@ -85,8 +87,17 @@ export class QuestionProvider {
       pushRef.set({
         "date": moment().toDate().getTime(),
         "score": pss
-      })
-    })
+      });
+      this.logQuestionnaireRef.once('value', (snapshot) => {
+        var tempName = "questionnaire_" + snapshot.val() + "_pss";
+        var updateObject = {};
+        updateObject[tempName] = pss;
+        this.logQuestionnaireRef.parent.update(updateObject);
+      });
+    });
+
+
+
   }
 
   questionnaireAvailable(trainingsCounter) {

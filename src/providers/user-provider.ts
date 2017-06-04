@@ -216,8 +216,10 @@ export class UserProvider {
               });
 
               // set all counters, which are required for logging data
-              this.logRef = firebase.database().ref(dataPath + 'dataLog/' + this.__encodeDotsInString(newUser.email)); //change here to encoded email address
+              this.logRef = firebase.database().ref(dataPath + '/dataLog/' + this.__encodeDotsInString(newUser.email)); //change here to encoded email address
               this.logRef.set({
+                email: newUser.email,
+                experiment_group_id: detailsAny.custom.experimentgroup,
                 profilePage_count: 0,
                 knowledgePage_count: 0,
                 training_count: 0,
@@ -251,40 +253,44 @@ export class UserProvider {
   }
 
   assignExperimentGroup(user: any): any {
-    let userid = user.uid;
+    let userid = user;
     return Rx.Observable.create((observer) => {
 
-      let experimentGroupRef = firebase.database().ref(user.data_path + '/experiment_groups');
-      experimentGroupRef.once('value', (snapshot) => {
+      firebase.database().ref("/current_db_path").once('value', (snapshot) => {
+        let dataPath = snapshot.val();
+        let experimentGroupRef = firebase.database().ref(dataPath + '/experiment_groups');
+        experimentGroupRef.once('value', (snapshot) => {
 
-        let groups = snapshot.val();
+          let groups = snapshot.val();
 
-        //find smallest group
-        var smallestGroupId = "";
-        var smallestGroupCountMembers = 1000000;
+          //find smallest group
+          var smallestGroupId = "";
+          var smallestGroupCountMembers = 1000000;
 
-        Object.keys(groups).forEach((key) => {
-          if (groups[key].members) {
-            if (Object.keys(groups[key].members).length < smallestGroupCountMembers) {
-              smallestGroupCountMembers = Object.keys(groups[key].members).length;
+          Object.keys(groups).forEach((key) => {
+            if (groups[key].members) {
+              if (Object.keys(groups[key].members).length < smallestGroupCountMembers) {
+                smallestGroupCountMembers = Object.keys(groups[key].members).length;
+                smallestGroupId = key;
+              }
+            }
+            else {
+              smallestGroupCountMembers = 0;
               smallestGroupId = key;
             }
-          }
-          else {
-            smallestGroupCountMembers = 0;
-            smallestGroupId = key;
-          }
-        });
+          });
 
-        let groupMemberRef = firebase.database().ref(user.data_path + '/experiment_groups/' + smallestGroupId + "/members").push();
-        groupMemberRef.set({
-          "uid": userid
-        });
+          let groupMemberRef = firebase.database().ref(dataPath + '/experiment_groups/' + smallestGroupId + "/members").push();
+          groupMemberRef.set({
+            "uid": userid
+          });
 
-        observer.next(smallestGroupId);
-        observer.complete();
+          observer.next(smallestGroupId);
+          observer.complete();
+        });
       });
     });
+
   }
 
   resetPassword(email: string): any {

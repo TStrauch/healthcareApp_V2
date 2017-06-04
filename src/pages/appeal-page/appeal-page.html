@@ -20,7 +20,9 @@
 
 <ion-content padding class="darkblue-bg">
 
-  <img [src]="url" class="center">
+  <div *ngIf="url != null">
+    <img [src]="url" class="center">
+  </div>
   <p style="color:white;">{{text}}</p>
 
 </ion-content>
